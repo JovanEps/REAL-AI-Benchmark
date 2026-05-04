@@ -1,0 +1,70 @@
+NASLOV: Diskretni LIF neuron + tačan račun + Python provera
+0) OUTPUT CONTRACT (OBAVEZNO)
+Moraš ispisati izlaz TAČNO ovim redom i sa TAČNO ovim naslovima, svaki u posebnom redu:
+A-IZVOD
+B-TABELA
+C-KOD
+RESULTS_JSON
+<END>
+Ako ne možeš da ispoštuješ format ili tačan račun, ispiši samo:
+NEUSPEH: (kratak razlog)
+RESULTS_JSON
+<END>
+1) PRAVILA
+- Piši na srpskoj latinici, standardna ekavica.
+- Bez interneta.
+- U objašnjenju nema meta-komentara, planova, “thinking process”, izgovora niti alternativnih interpretacija.
+- Dozvoljen je TAČNO JEDAN Python code-block.
+- U Pythonu je dozvoljeno koristiti SAMO: fractions i json.
+- Zabranjeno: numpy, scipy, sympy, decimal, math, fajl I/O.
+- Sve račune prikaži EGZAKTNO kao razlomke gde god je moguće.
+- Uz razlomke prikaži i decimalne vrednosti.
+- Ne koristi “...” niti nedovršene blokove.
+2) MODEL
+Za binarni ulaz x_t ∈ {0,1} važi:
+u_t = (3/4) v_t + (1/2) x_t
+s_t = 1, ako je u_t >= 1
+s_t = 0, ako je u_t < 1
+v_(t+1) = u_t - s_t
+Početno stanje:
+v_0 = 0
+Ulazni niz:
+x_0,...,x_7 = [1,1,1,0,1,1,0,1]
+3) ZADATAK
+A-IZVOD
+- Ukratko objasni dinamiku sistema.
+- Dokaži da za svaki korak važi invarijanta:
+  0 <= v_t < 1
+B-TABELA
+Za t = 0,...,7 izračunaj i prikaži:
+- x_t
+- v_t
+- u_t
+- s_t
+- v_(t+1)
+Obavezno:
+- Svaku vrednost prikaži kao razlomak.
+- Uz svaku vrednost prikaži i decimalni zapis.
+- Na kraju napiši ukupan broj spike-ova.
+Tabela mora sadržati svih 8 koraka.
+C-KOD
+Napiši TAČNO JEDAN Python skript koji:
+- koristi Fraction za egzaktan račun,
+- rekonstruiše celu tabelu,
+- proverava da se dobijene vrednosti poklapaju sa ručno izvedenim,
+- proverava invarijantu 0 <= v_t < 1 za sve korake,
+- na kraju ispisuje jedan JSON preko:
+  print("RESULTS_JSON=" + json.dumps(obj, ensure_ascii=False))
+RESULTS_JSON
+Ispiši TAČNO JEDAN validan JSON objekat bez dodatnog teksta pre ili posle, sa sledećom šemom:
+{
+  "u_fraction": ["...", "..."],
+  "u_decimal": [0.0, 0.0],
+  "s": [0, 1],
+  "v_fraction": ["...", "..."],
+  "v_decimal": [0.0, 0.0],
+  "spike_count": 0,
+  "invariant_holds": true
+}
+Poslednji red mora biti:
+<END>

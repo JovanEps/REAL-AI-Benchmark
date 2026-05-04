@@ -1,0 +1,15 @@
+{
+  "model": "string",
+  "benchmark": "GO-1|GO-2|GO-3|GO-4|GO-5|GO-6|GO-6-old-simple-no-VI",
+  "platform": "Online|PC1|PC2|Other",
+  "quantization": "string",
+  "tokens_per_second": "number",
+  "thinking_time_sec": "integer",
+  "output_tokens": "integer",
+  "score": "number 0..10",
+  "code_compiles": "boolean|null",
+  "go6_variant": "multimodal|old-simple-no-VI|null",
+  "images_attached": "boolean|null",
+  "unique": "boolean|null",
+  "notes": "string"
+}

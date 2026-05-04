@@ -1,0 +1,71 @@
+NASLOV: 2D valid convolution 3x3 u C99
+OUTPUT CONTRACT (OBAVEZNO)
+Moraš ispisati izlaz TAČNO ovim redom i sa TAČNO ovim naslovima, svaki u posebnom redu:
+A-RUCNI_REZULTAT
+B-ANALIZA
+C-KOD
+RESULTS_JSON
+Ako ne možeš da ispoštuješ format ili napišeš kompletan C99 kod, ispiši samo:
+NEUSPEH: (kratak razlog)
+RESULTS_JSON
+PRAVILA
+Piši na srpskoj latinici, standardna ekavica.
+Bez interneta.
+U objašnjenju bez meta-komentara, planova, izgovora i “thinking process”.
+Dozvoljen je TAČNO JEDAN C code-block.
+Kod mora biti validan C99.
+Dozvoljene biblioteke: stdio.h, stdlib.h, math.h
+Zabranjeno: pseudokod, C++, eksterne biblioteke, TODO, ...
+Identifikatori u kodu mogu biti na engleskom.
+ULAZ
+Ulazna matrica X, dimenzije 4x4:
+[ [1, 2, 0, 1],
+[3, 1, 2, 2],
+[0, 1, 3, 1],
+[2, 2, 1, 0] ]
+Kernel K, dimenzije 3x3:
+[ [ 1, 0,-1],
+[ 2, 0,-2],
+[ 1, 0,-1] ]
+Koristi se valid convolution, stride = 1, bez padding-a.
+Pod “valid convolution” u ovom zadatku podrazumevaj matematičku konvoluciju sa rotacijom kernela za 180° pre primene.
+ZADATAK
+A-RUCNI_REZULTAT
+Ručno izračunaj kompletnu izlaznu matricu.
+Prikaži sve međukorake za sva 4 izlazna elementa.
+Jasno napiši konačnu 2x2 matricu.
+B-ANALIZA
+Objasni zašto je izlaz dimenzije 2x2.
+Izračunaj broj množenja i broj sabiranja za jedan izlazni element.
+Izračunaj ukupan broj množenja i sabiranja za ceo izlaz.
+Broj množenja i sabiranja računaj za naivnu gustu 3x3 implementaciju, bez iskorišćavanja nultih koeficijenata kernela.
+Ukratko objasni row-major indeksiranje koje ćeš koristiti u C kodu.
+C-KOD
+Napiši kompletan C99 program sa funkcijom:
+void conv2d_valid_3x3(
+const float *x, int h, int w,
+const float k[3][3],
+float *y
+);
+Zahtevi:
+x je ulaz u row-major rasporedu.
+y je izlaz u row-major rasporedu.
+Program mora sadržati i main koji:
+inicijalizuje dati primer,
+poziva funkciju,
+ispisuje izlaznu 2x2 matricu.
+Kod mora biti kompletan i kompajlabilan.
+U implementaciji moraš eksplicitno primeniti matematičku konvoluciju, tj. kernel rotiran za 180°.
+RESULTS_JSON
+Ispiši TAČNO JEDAN validan JSON objekat bez dodatnog teksta pre ili posle, sa sledećom šemom:
+{
+"output_h": 0,
+"output_w": 0,
+"manual_output": [[0.0, 0.0], [0.0, 0.0]],
+"mul_per_output": 0,
+"add_per_output": 0,
+"mul_total": 0,
+"add_total": 0
+}
+Poslednji red mora biti:
+<END>

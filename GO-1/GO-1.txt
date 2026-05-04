@@ -1,0 +1,75 @@
+NASLOV: DSS-RBAC minimalna korekcija politike
+0) OUTPUT CONTRACT (OBAVEZNO)
+Moraš ispisati izlaz TAČNO ovim redom i sa TAČNO ovim naslovima, svaki u posebnom redu:
+A-KRSENJA
+B-KOREKCIJA
+C-DOKAZ_MINIMALNOSTI
+RESULTS_JSON
+<END>
+Ako ne možeš da ispoštuješ format ili logičku konzistentnost zadatka, ispiši samo:
+NEUSPEH: (kratak razlog)
+RESULTS_JSON
+<END>
+1) PRAVILA
+- Piši na srpskoj latinici, standardna ekavica.
+- Bez interneta.
+- Bez koda.
+- Bez meta-komentara, planova, izgovora, “thinking process”, “ne mogu da budem siguran”, “moguće je i...”.
+- Ne uvodi dodatne pretpostavke koje nisu eksplicitno zadate.
+- Ne preskači dokaz minimalnosti.
+2) ULOGE
+- CEO
+- CFO
+- OPS
+- AUD
+3) DOZVOLE
+- D   = pristup dashboard-ima
+- A10 = odobravanje do 10k
+- A50 = odobravanje preko 10k do 50k
+- VC  = kreiranje dobavljača
+- VP  = puštanje plaćanja
+4) POČETNA MATRICA
+- CEO: D=1, A10=0, A50=1, VC=0, VP=0
+- CFO: D=1, A10=1, A50=0, VC=1, VP=1
+- OPS: D=1, A10=1, A50=0, VC=1, VP=0
+- AUD: D=1, A10=0, A50=0, VC=0, VP=1
+5) OGRANIČENJA
+1. CEO, CFO i OPS moraju imati D=1.
+2. A50 implicira A10.
+3. Tačno jedan od {CEO, CFO} mora imati A50=1.
+4. OPS mora imati A10=1 i A50=0.
+5. Nijedna uloga ne sme istovremeno imati VC=1 i VP=1.
+6. Tačno jedan od {CFO, OPS} mora imati VC=1.
+7. CFO mora imati VP=1.
+8. AUD sme imati samo D=1, a sve ostalo mora biti 0.
+6) ZADATAK
+Uradi sledeće:
+A-KRSENJA
+- Navedi SVA prekršena ograničenja iz tačke 5.
+- Za svako prekršeno ograničenje napiši kratko zašto je prekršeno.
+B-KOREKCIJA
+- Nađi ispravljenu matricu sa MINIMALNIM brojem promena bitova.
+- Jasno prikaži koje si bitove promenio.
+- Prikaži konačnu matricu za sve 4 uloge i svih 5 dozvola.
+C-DOKAZ_MINIMALNOSTI
+- Dokaži da sa manjim brojem promena nije moguće zadovoljiti sva ograničenja.
+- Zatim napiši da li je dobijeno minimalno rešenje jedinstveno ili nije.
+- Ako nije jedinstveno, navedi sva minimalna rešenja. Ako jeste, napiši da je jedinstveno.
+RESULTS_JSON
+Ispiši TAČNO JEDAN validan JSON objekat bez dodatnog teksta pre ili posle, sa sledećom šemom:
+{
+  "violated_constraints": [brojevi_ograničenja],
+  "bit_flips_count": broj,
+  "bit_flips": [
+    {"role":"...", "permission":"...", "from":0, "to":1}
+  ],
+  "final_matrix": {
+    "CEO":{"D":0,"A10":0,"A50":0,"VC":0,"VP":0},
+    "CFO":{"D":0,"A10":0,"A50":0,"VC":0,"VP":0},
+    "OPS":{"D":0,"A10":0,"A50":0,"VC":0,"VP":0},
+    "AUD":{"D":0,"A10":0,"A50":0,"VC":0,"VP":0}
+  },
+  "is_unique_minimum": true
+}
+Poslednji red mora biti:
+<END>

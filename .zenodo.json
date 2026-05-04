@@ -1,0 +1,24 @@
+{
+  "creators": [
+    {
+      "name": "Ivković, Jovan",
+      "orcid": "0000-0001-5236-9529"
+    }
+  ],
+  "title": "REAL-AI-Benchmark: Real-World Reasoning and Physical-AI Benchmark Suite",
+  "description": "REAL-AI-Benchmark is a suite of real-world reasoning benchmarks for evaluating large language models beyond synthetic leaderboard tasks. It includes GO-1 to GO-6 benchmarks covering symbolic reasoning, algorithmic verification, code generation, reproducibility, and multimodal physical-AI decision-making with analog instrument reading, fuzzy inference, and dynamic simulation.",
+  "license": "cc-by-4.0",
+  "keywords": [
+    "artificial intelligence",
+    "AI benchmark",
+    "large language models",
+    "benchmark",
+    "multimodal reasoning",
+    "physical AI",
+    "multimodal evaluation",
+    "fuzzy logic",
+    "dynamic simulation",
+    "Zig"
+  ],
+  "communities": []
+}

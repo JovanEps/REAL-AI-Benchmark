@@ -1,0 +1,94 @@
+NASLOV: Zig bitmask solver za 4x4 Latin square sa proverom jedinstvenosti
+OUTPUT CONTRACT (OBAVEZNO)
+Moraš ispisati izlaz TAČNO ovim redom i sa TAČNO ovim naslovima, svaki u posebnom redu:
+A-LOGIKA
+B-BITMASKE
+C-ZIG_KOD
+RESULTS_JSON
+Ako ne možeš da ispoštuješ format ili napišeš kompletan Zig kod, ispiši samo:
+NEUSPEH: (kratak razlog)
+RESULTS_JSON
+PRAVILA
+Piši na srpskoj latinici, standardna ekavica.
+Bez interneta, osim za potrebe upoznavanja sa aktuelnom ZIG 0.16.x sintaksom iz 2026.
+Bez meta-komentara, planova, izgovora i “thinking process”.
+Dozvoljen je TAČNO JEDAN Zig code-block.
+Kod mora biti kompletan i kompajlabilan kao jedan fajl.
+Koristi samo Zig standardnu biblioteku (std).
+Kod neka bude kompatibilan sa Zig 0.12+.
+Zabranjeno: pseudokod, TODO, ..., hardkodovanje finalnog rešenja bez rešavača.
+Rešenje mora stvarno da rešava zadati problem, ne da samo ispiše unapred poznatu matricu.
+ZADATAK
+Posmatra se 4x4 Latin square sa simbolima 1..4.
+Pravila:
+U svakom redu svaki broj 1,2,3,4 mora se pojaviti tačno jednom.
+U svakoj koloni svaki broj 1,2,3,4 mora se pojaviti tačno jednom.
+Prazno polje je označeno nulom.
+Početna matrica G:
+[ [1, 0, 0, 4],
+[0, 4, 0, 0],
+[2, 0, 4, 0],
+[0, 3, 0, 1] ]
+Koristi bitmaske za skup kandidata u praznim poljima.
+Obavezno koristi sledeće mapiranje bita na vrednost:
+bit 0 -> broj 1
+bit 1 -> broj 2
+bit 2 -> broj 3
+bit 3 -> broj 4
+Dakle:
+maska 0b0001 znači {1}
+maska 0b0010 znači {2}
+maska 0b0100 znači {3}
+maska 0b1000 znači {4}
+maska 0b1111 znači {1,2,3,4}
+ZADATAK PO SEKCIJAMA
+A-LOGIKA
+Ručno izračunaj početne skupove kandidata za SVA prazna polja posle jednog prolaza eliminacije po redu i koloni.
+Kandidate prikaži i kao skup i kao bitmasku.
+Zatim prikaži najmanje 4 prisilna koraka (forced placements), jasno redom.
+Na kraju napiši konačno rešenje 4x4 matrice.
+Jasno napiši da li je rešenje jedinstveno.
+B-BITMASKE
+Ukratko objasni kako kandidat skup kodiraš u u8 masku.
+Objasni kako prepoznaješ singleton masku.
+Objasni zašto je za proveru jedinstvenosti dovoljno brojati rešenja samo do 2.
+Napiši broj početno praznih polja.
+Napiši broj početnih singleton kandidata posle prvog prolaza eliminacije.
+C-ZIG_KOD
+Napiši kompletan Zig program u jednom fajlu.
+Obavezno koristi:
+const Grid = [4][4]u8;
+Program mora da sadrži bar sledeće funkcije:
+fn popcount4(mask: u8) u8
+fn singletonValue(mask: u8) u8
+fn candidatesMask(g: *const Grid, r: usize, c: usize) u8
+fn solveUnique(g: *Grid, solution_count: *u8, first_solution: *Grid) void
+Zahtevi:
+Rešavanje mora biti zasnovano na bitmaskama.
+candidatesMask mora vratiti masku dozvoljenih vrednosti za polje (r, c).
+solveUnique mora brojati broj rešenja, ali sme da prekine dalju pretragu kada solution_count >= 2.
+Kod ne sme hardkodovati finalno rešenje.
+U main:
+inicijalizuj zadatu matricu,
+pokreni rešavač,
+ispiši prvo pronađeno rešenje kao 4x4 matricu,
+ispiši da li je rešenje jedinstveno.
+RESULTS_JSON
+Ispiši TAČNO JEDAN validan JSON objekat bez dodatnog teksta pre ili posle, sa sledećom šemom:
+{
+"empty_cells_initial": 0,
+"initial_singletons": 0,
+"unique": false,
+"solution_count_capped": 0,
+"solution": [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]
+}
+Napomene:
+empty_cells_initial = broj nula u početnoj matrici
+initial_singletons = broj polja koja već posle prvog prolaza eliminacije imaju tačno jednog kandidata
+unique = da li postoji tačno jedno rešenje
+solution_count_capped = 0, 1 ili 2
+(ako postoje 2 ili više rešenja, upiši 2)
+solution = prvo pronađeno rešenje, odnosno jedinstveno rešenje ako je unique=true
+Poslednji red mora biti:
+<END>
+p.s. Vodi računa da koristiš novi referentni ZIG sintaksni model od verzije 0.15.2 i 0.16.x iz 2026.

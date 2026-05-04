@@ -1,0 +1,449 @@
+GO-6: PHYS-CAUSAL-FUZZY BENCHMARK
+Analog Sensor Fusion, Fuzzy Logic and Short-Horizon Physical Dynamics
+
+Ovo je test fizičko-kauzalnog rezonovanja, pažnje na detalje, numeričke preciznosti, fuzzy zaključivanja, kratkoročne dinamičke simulacije i sposobnosti da se izabere jedinstvena ispravna akcija u realističnom fizičkom sistemu.
+
+Ne rešavaj zadatak kao tekstualni obrazac naučen iz memorije. Ne koristi internet. Ne pozivaj se na poznate video-snimke, forume, Twitter/X objave, benchmark tabele ili memorisane primere. Ovo je samostalan fizičko-matematički zadatak. Potrebno je izračunati sve što je zadato.
+
+Zadatak predstavlja mali zatvoreni termofluidni laboratorijski sistem TFC-4. Sistem ima gasnu komoru, grejač, rashladni protok, rasteretni ventil i pumpu. Model sistema je pojednostavljen, ali svi parametri i formule potrebni za rešavanje dati su u tekstu.
+
+Cilj je odrediti jedinu najbolju upravljačku akciju na osnovu:
+1. očitavanja analognih senzora,
+2. intervala nesigurnosti merenja,
+3. fuzzy pripadnosti,
+4. aktivacije fuzzy pravila,
+5. kratkoročne dinamičke simulacije u naredna 3 takta,
+6. poređenja posledica svih dostupnih akcija.
+
+Moraš dati kompletan postupak. Nije dovoljno pogoditi konačan odgovor.
+
+--------------------------------------------
+ULAZNI PODACI
+--------------------------------------------
+
+Analogna očitavanja instrumenata data su kao nominalne vrednosti i intervali očitavanja. Vrednosti tretiraj kao fizička merenja sa ograničenom preciznošću.
+
+Nominalna očitavanja:
+
+T  = 68.5 °C
+P  = 132.0 kPa
+F  = 4.2 L/min
+V  = 5.6 mm/s
+D  = dP/dt = +2.1 kPa/min
+
+Intervali očitavanja:
+
+T ∈ [68.0, 69.0] °C
+P ∈ [131.0, 133.0] kPa
+F ∈ [4.0, 4.4] L/min
+V ∈ [5.4, 5.8] mm/s
+D ∈ [1.9, 2.3] kPa/min
+
+Gde je:
+
+T = temperatura komore
+P = pritisak u komori
+F = protok rashladnog fluida
+V = vibracija pumpe
+D = trenutni trend promene pritiska, tj. dP/dt
+
+Za osnovni proračun koristi nominalne vrednosti. Intervali služe za proveru robusnosti odluke i za komentar o osetljivosti.
+
+--------------------------------------------
+FUZZY SKUPOVI
+--------------------------------------------
+
+Koristi sledeće funkcije pripadnosti.
+
+1. Temperatura T
+
+normal(T):
+- 1 za T ≤ 55
+- linearno opada od 1 do 0 za 55 < T < 70
+- 0 za T ≥ 70
+
+high(T):
+- 0 za T ≤ 55
+- linearno raste od 0 do 1 za 55 < T < 70
+- 1 za 70 ≤ T ≤ 80
+- linearno opada od 1 do 0 za 80 < T < 90
+- 0 za T ≥ 90
+
+critical(T):
+- 0 za T ≤ 75
+- linearno raste od 0 do 1 za 75 < T < 90
+- 1 za T ≥ 90
+
+2. Pritisak P
+
+normal(P):
+- 1 za P ≤ 115
+- linearno opada od 1 do 0 za 115 < P < 135
+- 0 za P ≥ 135
+
+high(P):
+- 0 za P ≤ 115
+- linearno raste od 0 do 1 za 115 < P < 135
+- 1 za 135 ≤ P ≤ 145
+- linearno opada od 1 do 0 za 145 < P < 155
+- 0 za P ≥ 155
+
+critical(P):
+- 0 za P ≤ 140
+- linearno raste od 0 do 1 za 140 < P < 155
+- 1 za P ≥ 155
+
+3. Protok F
+
+low(F):
+- 1 za F ≤ 3.0
+- linearno opada od 1 do 0 za 3.0 < F < 5.0
+- 0 za F ≥ 5.0
+
+adequate(F):
+- 0 za F ≤ 3.0
+- linearno raste od 0 do 1 za 3.0 < F < 5.0
+- 1 za 5.0 ≤ F ≤ 7.0
+- linearno opada od 1 do 0 za 7.0 < F < 8.5
+- 0 za F ≥ 8.5
+
+4. Vibracija V
+
+stable(V):
+- 1 za V ≤ 3.0
+- linearno opada od 1 do 0 za 3.0 < V < 5.5
+- 0 za V ≥ 5.5
+
+unstable(V):
+- 0 za V ≤ 4.0
+- linearno raste od 0 do 1 za 4.0 < V < 6.5
+- 1 za V ≥ 6.5
+
+5. Trend pritiska D = dP/dt
+
+steady(D):
+- 1 za |D| ≤ 0.5
+- linearno opada od 1 do 0 za 0.5 < |D| < 1.5
+- 0 za |D| ≥ 1.5
+
+rising_fast(D):
+- 0 za D ≤ 1.0
+- linearno raste od 0 do 1 za 1.0 < D < 3.0
+- 1 za D ≥ 3.0
+
+--------------------------------------------
+FUZZY PRAVILA
+--------------------------------------------
+
+Koristi Mamdani min-max logiku.
+
+Za operator AND koristi minimum.
+Za operator OR koristi maksimum.
+Agregirani fuzzy rizik je maksimum aktivacija svih pravila.
+
+Pravila:
+
+R1:
+IF T is high AND P is high
+THEN risk = high
+
+R2:
+IF P is high AND D is rising_fast
+THEN risk = very_high
+
+R3:
+IF F is low AND T is high
+THEN risk = very_high
+
+R4:
+IF V is unstable AND P is high
+THEN risk = high
+
+R5:
+IF T is critical OR P is critical
+THEN risk = critical
+
+Za potrebe ovog testa numerički aggregated_risk izračunaj kao:
+
+aggregated_risk = max(R1, R2, R3, R4, R5)
+
+Inicijalna fuzzy odluka na osnovu aggregated_risk:
+
+risk < 0.35        -> MONITOR
+0.35 ≤ risk < 0.60 -> DERATE
+0.60 ≤ risk < 0.80 -> CONTROLLED_RELIEF
+risk ≥ 0.80        -> EMERGENCY_MODE
+
+VAŽNO:
+Inicijalna fuzzy odluka nije automatski konačna odluka. Konačna odluka mora biti dobijena posle dinamičke simulacije posledica svih akcija. Ako fuzzy zaključak i dinamička simulacija nisu isti, objasni zašto konačnu prednost ima dinamička simulacija.
+
+--------------------------------------------
+DOSTUPNE AKCIJE
+--------------------------------------------
+
+Postoje četiri moguće akcije:
+
+A0 = MONITOR
+A1 = DERATE
+A2 = CONTROLLED_RELIEF
+A3 = EMERGENCY_MODE
+
+Svaka akcija ima parametre H, R, S, C:
+
+A0 = MONITOR:
+H = +2.0
+R = 0.0
+S = +0.2
+C = 0.0
+
+A1 = DERATE:
+H = +0.5
+R = 1.0
+S = +0.1
+C = +0.4
+
+A2 = CONTROLLED_RELIEF:
+H = -0.5
+R = 4.0
+S = +0.3
+C = +0.8
+
+A3 = EMERGENCY_MODE:
+H = -2.0
+R = 9.0
+S = +1.8
+C = -1.5
+
+Tumačenje:
+H utiče na termički bilans.
+R utiče na rasterećenje pritiska.
+S utiče na vibracioni udar.
+C utiče na promenu rashladnog protoka.
+
+--------------------------------------------
+DINAMIČKI MODEL
+--------------------------------------------
+
+Simuliraj sistem 3 takta unapred za svaku akciju posebno.
+
+Početno stanje je:
+
+T0 = 68.5
+P0 = 132.0
+F0 = 4.2
+V0 = 5.6
+D  = 2.1
+
+U ovoj verziji testa D se tokom tri takta tretira kao konstantno očitani trend pritiska.
+
+Za svaku akciju koristi iste parametre H, R, S, C tokom sva tri takta.
+
+Jednačine prelaza:
+
+T[t+1] = T[t] + 0.18*(P[t] - 120) - 0.75*F[t] + H
+
+P[t+1] = P[t] + D + 0.12*(T[t] - 65) - R
+
+V[t+1] = V[t] + 0.08*(P[t] - 125) + S
+
+F[t+1] = F[t] + C
+
+Redosled računanja:
+Za svaki t koristi vrednosti T[t], P[t], F[t], V[t] iz trenutnog stanja i izračunaj T[t+1], P[t+1], V[t+1], F[t+1]. Zatim pređi na sledeći takt.
+
+Ne zaokružuj međukorake. Za prikaz rezultata možeš zaokružiti na 3 decimale.
+
+--------------------------------------------
+KLASIFIKACIJA ISHODA
+--------------------------------------------
+
+Nakon 3 takta klasifikuj poslednje stanje svake akcije.
+
+Ishod je catastrophic ako važi bilo šta od sledećeg:
+
+T > 85
+ili P > 150
+ili V > 8
+ili F < 2.5 pri T > 75
+
+Ishod je unstable ako nije catastrophic, ali važi bilo šta od sledećeg:
+
+T > 78
+ili P > 142
+ili V > 7
+
+Ishod je safe ako važi sve sledeće:
+
+T ≤ 78
+P ≤ 142
+V ≤ 7
+F ≥ 3.5
+
+Ako akcija nije catastrophic, ali ne zadovoljava uslove safe zbog jedne ili više unstable granica, klasifikuj je kao unstable.
+
+--------------------------------------------
+KRITERIJUM IZBORA KONAČNE AKCIJE
+--------------------------------------------
+
+Konačna preporučena akcija bira se ovim redom:
+
+1. Eliminisati catastrophic akcije.
+2. Prednost imaju safe akcije u odnosu na unstable akcije.
+3. Ako postoji tačno jedna safe akcija, ona je jedinstveno najbolja.
+4. Ako postoji više safe akcija, izabrati onu sa najmanjom intervencijom redom:
+   MONITOR < DERATE < CONTROLLED_RELIEF < EMERGENCY_MODE
+5. Ako nema safe akcija, izabrati unstable akciju sa najmanjim maksimalnim relativnim prekoračenjem granica.
+6. Ako su dve akcije numerički izjednačene, unique_best_action = false.
+
+Za ovaj zadatak moraš posebno objasniti da najagresivnija akcija nije nužno najbolja, jer može izazvati nepovoljan sekundarni efekat kroz vibracije i protok.
+
+--------------------------------------------
+ZAHTEVANI FORMAT ODGOVORA
+--------------------------------------------
+
+Odgovor mora imati sledeće sekcije, tačno ovim redom:
+
+A-OCITAVANJE_ANALOGNIH_INSTRUMENATA
+
+U ovoj sekciji prikaži nominalna očitavanja i intervale. Objasni da se radi o fizičkim veličinama i da male greške očitavanja mogu promeniti fuzzy stepen pripadnosti i dinamički ishod.
+
+B-FIZICKA_KONZISTENTNOST
+
+Proveri jedinice i kratko objasni fizički smisao: rast temperature, rast pritiska, nedovoljan protok, vibracije i pozitivan dP/dt. Ne koristi opšte fraze bez veze sa datim brojevima.
+
+C-FUZZY_INFERENCIJA
+
+Izračunaj sve relevantne fuzzy pripadnosti:
+normal(T), high(T), critical(T)
+normal(P), high(P), critical(P)
+low(F), adequate(F)
+stable(V), unstable(V)
+steady(D), rising_fast(D)
+
+Zatim izračunaj R1, R2, R3, R4, R5 i aggregated_risk.
+
+Napiši inicijalnu fuzzy odluku.
+
+D-DINAMICKA_SIMULACIJA
+
+Za svaku akciju A0, A1, A2, A3 izračunaj stanje nakon takta 1, 2 i 3:
+T, P, F, V
+
+Prikaži tabelu za svaku akciju.
+
+Zatim klasifikuj svaku akciju kao safe, unstable ili catastrophic.
+
+E-ODLUKA_I_DOKAZ_JEDINSTVENOSTI
+
+Napiši:
+- preporučenu akciju,
+- indeks akcije,
+- da li je odluka jedinstvena,
+- zašto ostale akcije nisu bolje,
+- zašto se konačna odluka ne sme doneti samo na osnovu inicijalnog fuzzy rizika.
+
+F-ZIG_KOD
+
+Napiši kompletan Zig program koji:
+- definiše početno stanje,
+- definiše akcije,
+- računa fuzzy pripadnosti,
+- računa rule activations,
+- simulira sve četiri akcije kroz 3 takta,
+- klasifikuje ishode,
+- štampa konačnu preporuku,
+- štampa RESULTS_JSON.
+
+Zig kod treba da bude samostalan i konzistentan.
+Preferiraj std.debug.print za ispis da bi kod bio jednostavniji i kompatibilniji.
+Ne koristi pseudokod.
+Ne koristi C sintaksu.
+Ne dupliraj funkcije.
+Ne ostavljaj neinicijalizovana polja u rezultatu.
+Ako koristiš tipove sa decimalama, koristi f64.
+
+Na kraju obavezno ispiši RESULTS_JSON u sledećoj strukturi.
+
+--------------------------------------------
+OBAVEZNI RESULTS_JSON
+--------------------------------------------
+
+Na kraju odgovora mora postojati:
+
+RESULTS_JSON
+{
+  "sensor_readings": {
+    "T_C": ...,
+    "P_kPa": ...,
+    "F_L_min": ...,
+    "V_mm_s": ...,
+    "dPdt_kPa_min": ...
+  },
+  "reading_intervals": {
+    "T_C": [..., ...],
+    "P_kPa": [..., ...],
+    "F_L_min": [..., ...],
+    "V_mm_s": [..., ...],
+    "dPdt_kPa_min": [..., ...]
+  },
+  "fuzzy_memberships": {
+    "T": {
+      "normal": ...,
+      "high": ...,
+      "critical": ...
+    },
+    "P": {
+      "normal": ...,
+      "high": ...,
+      "critical": ...
+    },
+    "F": {
+      "low": ...,
+      "adequate": ...
+    },
+    "V": {
+      "stable": ...,
+      "unstable": ...
+    },
+    "dPdt": {
+      "steady": ...,
+      "rising_fast": ...
+    }
+  },
+  "rule_activations": {
+    "R1": ...,
+    "R2": ...,
+    "R3": ...,
+    "R4": ...,
+    "R5": ...
+  },
+  "aggregated_risk": ...,
+  "initial_fuzzy_decision": "...",
+  "dynamic_outcomes": {
+    "MONITOR": "...",
+    "DERATE": "...",
+    "CONTROLLED_RELIEF": "...",
+    "EMERGENCY_MODE": "..."
+  },
+  "recommended_action": "...",
+  "recommended_action_index": ...,
+  "unique_best_action": ...
+}
+<END>
+
+--------------------------------------------
+VAŽNA OGRANIČENJA
+--------------------------------------------
+
+1. Ne preskači fuzzy proračun.
+2. Ne preskači dinamičku simulaciju.
+3. Ne donosi odluku samo intuitivno.
+4. Ne tretiraj najagresivniju akciju kao automatski najbolju.
+5. Ne koristi spoljne izvore.
+6. Ne koristi memorisane primere.
+7. Ne menjaj formule.
+8. Ne menjaj pragove.
+9. Ne menjaj početne vrednosti.
+10. Ne zaokružuj međukorake pre kraja.
+11. Ako uočiš konflikt između inicijalne fuzzy odluke i dinamičke simulacije, objasni ga.
+12. Konačni odgovor mora biti proverljiv iz brojeva.

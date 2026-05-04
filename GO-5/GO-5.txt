@@ -1,0 +1,209 @@
+NASLOV: GO-5 Seedovani Mealy transduktor + forenzička korekcija jednog simbola + Zig 0.16.x verifikator
+OUTPUT CONTRACT (OBAVEZNO)
+Moraš ispisati izlaz TAČNO ovim redom i sa TAČNO ovim naslovima, svaki u posebnom redu:
+A-GENERISANJE
+B-RUCNA_SIMULACIJA
+C-DOKAZ_JEDINSTVENOSTI
+D-ZIG_KOD
+RESULTS_JSON
+<END>
+Ako ne možeš da ispoštuješ format, generisanje, ručnu simulaciju, dokaz jedinstvenosti ili napišeš kompletan Zig kod, ispiši samo:
+NEUSPEH: (kratak razlog)
+RESULTS_JSON
+<END>
+PRAVILA
+- Piši na srpskoj latinici, standardna ekavica.
+- Bez interneta, osim za proveru aktuelne Zig 0.16.x ili novije sintakse i standardne biblioteke iz 2026.
+- Finalni odgovor mora početi TAČNO naslovom:
+  A-GENERISANJE
+- Zabranjen je bilo kakav uvodni tekst pre tog naslova.
+- Zabranjeno je prikazivati plan rešavanja, chain-of-thought, scratchpad, samokomentare, “prvo ću...”, “razmotrimo...”, “hajde da...”, ili bilo kakvo razmišljanje naglas u finalnom odgovoru.
+- Ako platforma modela automatski prikazuje thinking u posebnom UI bloku koji nije deo finalnog odgovora, to se ne ocenjuje. Ocenjuje se samo finalni tekst odgovora.
+- Bez meta-komentara, planova, izgovora i “thinking process”.
+- Dozvoljen je TAČNO JEDAN Zig code-block.
+- Kod mora biti kompletan i kompajlabilan kao jedan fajl.
+- Koristi samo Zig standardnu biblioteku (std).
+- Kod mora biti kompatibilan sa Zig 0.16.x ili novijom verzijom iz 2026.
+- Upotreba zastarelog obrasca `std.io.getStdOut().writer()` ili drugog pre-0.16 I/O API-ja tretira se kao greška kompatibilnosti.
+- Stari Zig obrasci koji nisu kompatibilni sa 0.16.x+ tretiraju se kao greška.
+- Zabranjeno: pseudokod, TODO, ..., hardkodovanje konačnih izlaza, hardkodovanje pobedničkog kandidata, hardkodovanje pozicije greške, hardkodovanje correction tuple, hardkodovanje RESULTS_JSON bez stvarnog rešavača.
+- Zabranjeno: random, fajl I/O, mrežni pristup, učitavanje spoljnog sadržaja, generisanje “lakšeg” primera umesto zadate instance.
+- Zabranjeno: fusnote, reference, URL-ovi i dodatni citati u finalnom odgovoru.
+- Rešenje mora stvarno da:
+  1) generiše instancu iz datih pravila,
+  2) simulira sva tri kandidata,
+  3) pronađe jedinstveno validno objašnjenje posmatranog izlaza uz tačno jednu grešku simbola,
+  4) proveri da nijedna druga pojedinačna korekcija ne daje isto validno objašnjenje,
+  5) ispiše rezultat i JSON.
+VAŽNE DEFINICIJE
+- Svi indeksi u zadatku su 0-indeksirani.
+- Hamming-ovo rastojanje između dva stringa iste dužine je broj pozicija na kojima se razlikuju.
+- “Tačno jedna greška simbola” znači da se Y_obs razlikuje od čistog izlaza pobedničkog kandidata u tačno jednoj poziciji i da je na toj poziciji jedan simbol iz {A,B,C} zamenjen drugim simbolom iz {A,B,C}.
+MODEL I GENERATOR
+Posmatra se deterministički Mealy transduktor sa:
+- stanjima: q0, q1, q2, q3
+- ulaznim alfabetom: {0,1,2}
+- izlaznim alfabetom: {A,B,C}
+- početnim stanjem: q0
+Dat je seed-vektor:
+V = [11, 7, 19, 4, 23, 8]
+Iz njega se generišu parametri transduktora.
+Za q = 0,1,2,3:
+a_q = (V[q] + q) mod 4
+b_q = (V[q+2] + 2*q) mod 3
+Za ulaz x iz {0,1,2} važi:
+sledeće_stanje:
+delta(q, x) = (q + a_q + x) mod 4
+izlaz:
+lambda(q, x) = (b_q + q + 2*x) mod 3
+Mapiranje izlaza:
+0 -> A
+1 -> B
+2 -> C
+Iz istog seed-vektora generišu se tri kandidatske ulazne reči W0, W1, W2, svaka dužine 6.
+Za k iz {0,1,2} i i iz {0,1,2,3,4,5}:
+W_k[i] = (V[(i + k) mod 6] + i + 2*k) mod 3
+Dakle, moraš generisati tri reči:
+- W0
+- W1
+- W2
+POSMATRANI IZLAZ
+Dat je posmatrani izlaz:
+Y_obs = "ACCBBB"
+Pretpostavka:
+- Y_obs je nastao od TAČNO JEDNOG od tri kandidata W0, W1, W2
+- i to tako što je njegov čist izlaz kroz transduktor izmenjen u TAČNO JEDNOJ poziciji
+- dozvoljena je tačno jedna greška simbola u izlazu
+- simbolska greška znači promena jednog znaka iz skupa {A,B,C} u drugi znak iz istog skupa
+ZADATAK PO SEKCIJAMA
+A-GENERISANJE
+Uradi sledeće:
+1. Izračunaj vrednosti:
+- a_0, a_1, a_2, a_3
+- b_0, b_1, b_2, b_3
+2. Napiši kompletnu tabelu transduktora za sve kombinacije stanja i ulaza u OBAVEZNOM formatu:
+| q | x | a_q | b_q | lambda(q,x) | izlaz | delta(q,x) |
+|---|---|-----|-----|-------------|-------|------------|
+3. Izračunaj i napiši W0, W1, W2.
+4. Generisanje reči prikaži u OBAVEZNOM formatu:
+| kandidat | i | indeks u V | V[indeks] | i | 2k | zbir | mod 3 | W_k[i] |
+|----------|---|------------|-----------|---|----|------|-------|--------|
+Obavezno:
+- prikaži sve međukorake generisanja reči
+- ne preskači modularnu aritmetiku
+- ne preskači mapiranje brojeva na izlazne simbole
+B-RUCNA_SIMULACIJA
+Za svaku od reči W0, W1, W2 uradi ručnu simulaciju transduktora od početnog stanja q0.
+Za svaki kandidat prikaži OBAVEZNO tabelu:
+| t | trenutno stanje | ulaz x | lambda(q,x) | izlaz | sledeće stanje |
+|---|------------------|--------|-------------|-------|----------------|
+Na kraju za svaki kandidat napiši:
+- kompletnu putanju stanja dužine 7
+- čist izlazni string dužine 6
+- Hamming-ovo rastojanje između tog čistog izlaza i Y_obs
+Zatim napiši i zbirnu tabelu:
+| kandidat | reč | čist izlaz | putanja stanja | Hamming do Y_obs |
+|----------|-----|------------|----------------|------------------|
+Obavezno:
+- simuliraj sva tri kandidata
+- ne tvrdi pobednika bez prikaza sva tri poređenja
+- ne preskači nijedan korak stanja
+C-DOKAZ_JEDINSTVENOSTI
+Nađi i jasno napiši da li postoji TAČNO JEDNO validno objašnjenje u obliku četvorke:
+(kandidat_indeks, pozicija_greške, pogrešan_simbol, ispravan_simbol)
+gde važi:
+- kandidat_indeks je iz {0,1,2}
+- pozicija_greške je iz {0,1,2,3,4,5}
+- pogrešan_simbol je znak iz Y_obs
+- ispravan_simbol je znak koji na toj poziciji mora stajati u čistom izlazu pobedničkog kandidata
+Uradi sledeće:
+1. Napiši koji kandidat odgovara posmatranju.
+2. Napiši tačnu poziciju greške.
+3. Napiši:
+   - pogrešan simbol u Y_obs
+   - ispravan simbol
+4. Dokaži da nijedan drugi kandidat ne daje drugo validno objašnjenje sa tačno jednom greškom.
+5. Uradi kratku inverznu proveru:
+   - pokaži da korekcija baš te jedne pozicije vraća Y_obs u clean_output,
+   - pokaži da promena bilo koje druge pojedinačne pozicije ne daje isto validno objašnjenje.
+6. Jasno napiši da li je rešenje jedinstveno.
+Napomena:
+- C-DOKAZ_JEDINSTVENOSTI se ne priznaje kao pun ako su B-sekcija ili zbirna tabela kandidata pogrešne.
+D-ZIG_KOD
+Napiši kompletan Zig program u jednom fajlu.
+Obavezno koristi:
+const Seed = [6]u8;
+const Word = [6]u8;
+const Output = [6]u8;
+const Path = [7]u8;
+Program mora da definiše i tip:
+const Result = struct { ... };
+Program mora da sadrži bar sledeće funkcije:
+fn buildParams(v: *const Seed, a: *[4]u8, b: *[4]u8) void
+fn genWord(v: *const Seed, k: usize) Word
+fn simulate(a: *const [4]u8, b: *const [4]u8, w: *const Word, out: *Output, path: *Path) void
+fn hammingDistance(x: *const Output, y: *const Output) u8
+fn solveUnique(v: *const Seed, observed: *const Output, result: *Result) void
+Zahtevi:
+- Kod mora sam da generiše a i b iz V.
+- Kod mora sam da generiše W0, W1, W2 iz V.
+- Kod mora sam da simulira sva tri kandidata.
+- Kod mora da pronađe sve validne slučajeve sa tačno jednom greškom simbola.
+- Kod mora da utvrdi da li je rešenje jedinstveno.
+- Kod mora da proveri inverznu proveru iz C-sekcije.
+- Kod ne sme hardkodovati čiste izlaze kandidata.
+- Kod ne sme hardkodovati pobednika.
+- Kod ne sme hardkodovati poziciju greške.
+- Kod ne sme hardkodovati correction tuple.
+- Kod ne sme hardkodovati RESULTS_JSON.
+- U main:
+  - inicijalizuj V
+  - inicijalizuj Y_obs
+  - pokreni rešavač
+  - ispiši generisane reči
+  - ispiši čiste izlaze
+  - ispiši Hamming-ova rastojanja
+  - ispiši pobednički kandidat
+  - ispiši poziciju i korekciju greške
+  - ispiši da li je rešenje jedinstveno
+Napomene za reprezentaciju:
+- Ulazne reči čuvaj kao cifre 0,1,2.
+- Izlaze u kodu možeš čuvati kao brojeve 0,1,2 ili kao ASCII znakove A,B,C, ali to mora biti dosledno.
+- Ako koristiš numeričku internu reprezentaciju izlaza, obavezno je pretvori u A/B/C pri ispisu i u JSON-u.
+- Ako koristiš internu numeričku reprezentaciju za Y_obs, ona mora biti tačno ekvivalentna stringu "ACCBBB".
+RESULTS_JSON
+Ispiši TAČNO JEDAN validan JSON objekat bez dodatnog teksta pre ili posle, sa sledećom šemom:
+{
+  "seed": [0,0,0,0,0,0],
+  "a": [0,0,0,0],
+  "b": [0,0,0,0],
+  "words": [
+    [0,0,0,0,0,0],
+    [0,0,0,0,0,0],
+    [0,0,0,0,0,0]
+  ],
+  "observed_output": "",
+  "candidate_outputs": ["","",""],
+  "candidate_distances": [0,0,0],
+  "matching_word_index": -1,
+  "clean_output": "",
+  "state_path": [0,0,0,0,0,0,0],
+  "error_position": -1,
+  "error_from": "",
+  "error_to": "",
+  "unique": false
+}
+Napomene:
+- seed mora biti upravo dati V
+- words moraju biti W0, W1, W2
+- candidate_outputs moraju tačno odgovarati ručnoj simulaciji iz B-sekcije
+- candidate_distances moraju tačno odgovarati ručnoj simulaciji iz B-sekcije
+- matching_word_index je 0, 1 ili 2
+- clean_output je čist izlaz pobedničkog kandidata
+- state_path je putanja stanja pobedničkog kandidata, kodirana brojevima 0,1,2,3 za q0,q1,q2,q3
+- error_position je indeks 0..5
+- error_from je pogrešan znak iz Y_obs
+- error_to je ispravan znak posle korekcije
+- unique označava da li postoji tačno jedno validno objašnjenje
+Poslednji red mora biti:
+<END>

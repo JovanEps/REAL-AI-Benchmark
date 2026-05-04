@@ -1,0 +1,8 @@
+.zenodo.json
+CITATION.cff
+LICENSE
+LICENSE.txt
+LICENSES-NOTE.md
+NOTICE.md
+README_LICENSE_SECTION.md
+docs/license-and-citation.md

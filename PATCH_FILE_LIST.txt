@@ -1,0 +1,16 @@
+.zenodo.json
+CITATION.cff
+FILE_LIST.txt
+LICENSE
+LICENSE.txt
+LICENSES-NOTE.md
+Methodology/README.md
+NOTICE.md
+README.md
+README_LICENSE_SECTION.md
+docs/evaluation-methodology.md
+docs/license-and-citation.md
+docs/reproducibility.md
+docs/scoring-rubric.md
+results/README.md
+results/tables/result_schema.json

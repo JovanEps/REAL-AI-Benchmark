@@ -1,0 +1,2 @@
+model,benchmark,platform,quantization,tokens_per_second,thinking_time_sec,output_tokens,score,code_compiles,notes
+ExampleModel,GO-4,PC1,Q4_K_M,0.0,0,0,0.0,false,replace with measured data

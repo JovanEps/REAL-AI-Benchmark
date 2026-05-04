@@ -1,0 +1,429 @@
+GO-6: ANALOGNO-FIZIČKI FUZZY-DINAMIČKI TEST ODLUČIVANJA
+
+U ovom zadatku rešavaš problem realnog fizičkog sistema na osnovu pet analognih instrumenata prikazanih na priloženim slikama.
+
+Priložene slike su:
+
+PIC1.png
+PIC2.png
+PIC3.png
+PIC4.png
+PIC5.png
+
+Slike predstavljaju analogna merenja fizičkih veličina:
+
+PIC1.png -> temperatura T u °C
+PIC2.png -> pritisak P u kPa
+PIC3.png -> protok F u L/min
+PIC4.png -> vibracija V u mm/s
+PIC5.png -> trend pritiska D = dP/dt u kPa/min
+
+Ovo nije zadatak memorisanja, prepoznavanja šablona iz trening skupa ili tekstualnog nagađanja. Ovo je zadatak očitavanja analognih instrumenata, fizičkog rezonovanja, fuzzy inferencije, numeričke simulacije i izbora upravljačke akcije.
+
+Ako ne možeš da vidiš slike, jasno napiši da ne možeš kompletno rešiti zadatak. Ne smeš izmišljati očitavanja. Ako slike vidiš, moraš ih očitati što preciznije možeš i dalje računati na osnovu sopstvenog očitavanja.
+
+Sva očitavanja tretiraj kao fizička merenja ograničene preciznosti. Zato za svaku očitanu veličinu moraš navesti nominalnu vrednost i razuman interval neizvesnosti očitavanja.
+
+Odgovor mora imati sledeće sekcije, tačno ovim redosledom:
+
+A-OCITAVANJE_ANALOGNIH_INSTRUMENATA
+B-FIZICKA_KONZISTENTNOST
+C-FUZZY_INFERENCIJA
+D-DINAMICKA_SIMULACIJA
+E-ODLUKA_I_DOKAZ_JEDINSTVENOSTI
+F-ZIG_KOD
+RESULTS_JSON
+<END>
+
+
+A-OCITAVANJE_ANALOGNIH_INSTRUMENATA
+
+Očitaj vrednosti sa pet priloženih analognih instrumenata.
+
+Za svaku veličinu navedi:
+
+1. sliku iz koje je očitana vrednost;
+2. nominalno očitavanje;
+3. interval očitavanja;
+4. kratko objašnjenje kako je vrednost očitana sa skale.
+
+Koristi sledeće jedinice:
+
+T  -> °C
+P  -> kPa
+F  -> L/min
+V  -> mm/s
+D  -> kPa/min
+
+Prikaži tabelu oblika:
+
+| Veličina | Slika | Nominalno očitavanje | Interval očitavanja | Obrazloženje |
+| -------- | ----- | -------------------: | ------------------: | ------------ |
+
+Ne smeš preskočiti interval očitavanja. Ako skala nije savršeno jasna, moraš navesti širi interval neizvesnosti.
+
+
+B-FIZICKA_KONZISTENTNOST
+
+Na osnovu očitanih vrednosti objasni fizičko stanje sistema.
+
+Posebno razmotri:
+
+1. da li su temperatura i pritisak u normalnoj, povišenoj ili opasnoj zoni;
+2. da li je protok dovoljan za hlađenje;
+3. da li su vibracije blizu opasne zone;
+4. da li trend pritiska D ukazuje na stabilizaciju ili pogoršanje;
+5. da li postoji fizički konflikt između različitih akcija, na primer da agresivno rasterećenje može smanjiti pritisak, ali povećati vibracije.
+
+Ova sekcija mora biti kvalitativna, ali zasnovana na očitanim numeričkim vrednostima.
+
+
+C-FUZZY_INFERENCIJA
+
+Koristi sledeće fuzzy skupove.
+
+Temperatura T:
+
+normal(T):
+T <= 55          -> 1
+55 < T < 70      -> (70 - T) / 15
+T >= 70          -> 0
+
+high(T):
+T <= 55          -> 0
+55 < T < 70      -> (T - 55) / 15
+70 <= T <= 80    -> 1
+80 < T < 90      -> (90 - T) / 10
+T >= 90          -> 0
+
+critical(T):
+T <= 75          -> 0
+75 < T < 90      -> (T - 75) / 15
+T >= 90          -> 1
+
+
+Pritisak P:
+
+normal(P):
+P <= 115         -> 1
+115 < P < 135    -> (135 - P) / 20
+P >= 135         -> 0
+
+high(P):
+P <= 115         -> 0
+115 < P < 135    -> (P - 115) / 20
+135 <= P <= 145  -> 1
+145 < P < 155    -> (155 - P) / 10
+P >= 155         -> 0
+
+critical(P):
+P <= 140         -> 0
+140 < P < 155    -> (P - 140) / 15
+P >= 155         -> 1
+
+
+Protok F:
+
+low(F):
+F <= 3.0         -> 1
+3.0 < F < 5.0    -> (5.0 - F) / 2.0
+F >= 5.0         -> 0
+
+adequate(F):
+F <= 3.0         -> 0
+3.0 < F < 5.0    -> (F - 3.0) / 2.0
+5.0 <= F <= 7.0  -> 1
+7.0 < F < 8.5    -> (8.5 - F) / 1.5
+F >= 8.5         -> 0
+
+
+Vibracija V:
+
+stable(V):
+V <= 3.0         -> 1
+3.0 < V < 5.5    -> (5.5 - V) / 2.5
+V >= 5.5         -> 0
+
+unstable(V):
+V <= 4.0         -> 0
+4.0 < V < 6.5    -> (V - 4.0) / 2.5
+V >= 6.5         -> 1
+
+
+Trend pritiska D = dP/dt:
+
+steady(D):
+|D| <= 0.5        -> 1
+0.5 < |D| < 1.5   -> (1.5 - |D|) / 1.0
+|D| >= 1.5        -> 0
+
+rising_fast(D):
+D <= 1.0          -> 0
+1.0 < D < 3.0     -> (D - 1.0) / 2.0
+D >= 3.0          -> 1
+
+
+Izračunaj sve stepene pripadnosti i prikaži ih u tabeli.
+
+Zatim izračunaj aktivacije pravila po Mamdani min-max logici:
+
+R1 = min(high(T), high(P))
+R2 = min(high(P), rising_fast(D))
+R3 = min(low(F), high(T))
+R4 = min(unstable(V), high(P))
+R5 = max(critical(T), critical(P))
+
+Agregirani rizik je:
+
+aggregated_risk = max(R1, R2, R3, R4, R5)
+
+Početna fuzzy odluka je:
+
+aggregated_risk < 0.35        -> MONITOR
+0.35 <= risk < 0.60           -> DERATE
+0.60 <= risk < 0.80           -> CONTROLLED_RELIEF
+risk >= 0.80                  -> EMERGENCY_MODE
+
+Važno: početna fuzzy odluka nije nužno konačna odluka. Konačna odluka se donosi tek posle dinamičke simulacije posledica svih akcija.
+
+
+D-DINAMICKA_SIMULACIJA
+
+Simuliraj fizički sistem za tri diskretna takta.
+
+Početno stanje je ono koje si očitao sa analognih instrumenata:
+
+T0 = očitana temperatura
+P0 = očitan pritisak
+F0 = očitan protok
+V0 = očitana vibracija
+D  = očitan trend pritiska
+
+Za svaku akciju koristi sledeće parametre:
+
+| Akcija | Naziv             | H    | R   | S    | C    |
+| ------ | ----------------- | ---: | --: | ---: | ---: |
+| A0     | MONITOR           | +2.0 | 0.0 | +0.2 |  0.0 |
+| A1     | DERATE            | +0.5 | 1.0 | +0.1 | +0.4 |
+| A2     | CONTROLLED_RELIEF | -0.5 | 4.0 | +0.3 | +0.8 |
+| A3     | EMERGENCY_MODE    | -2.0 | 9.0 | +1.8 | -1.5 |
+
+Dinamika sistema je:
+
+T_next = T + 0.18 * (P - 120) - 0.75 * F + H
+
+P_next = P + D + 0.12 * (T - 65) - R
+
+V_next = V + 0.08 * (P - 125) + S
+
+F_next = F + C
+
+Simuliraj tačno tri takta za svaku akciju:
+
+t = 1
+t = 2
+t = 3
+
+Ne zaokružuj međukorake. U tabelama možeš prikazati vrednosti na tri decimale, ali odluke donesi na osnovu punih vrednosti.
+
+Za svaku akciju prikaži tabelu:
+
+| takt | T | P | F | V |
+| ---: | -: | -: | -: | -: |
+
+
+Klasifikacija ishoda radi se samo na završnom stanju posle trećeg takta.
+
+Prvo proveri catastrophic uslov:
+
+catastrophic ako:
+T > 85
+ili P > 150
+ili V > 8
+ili (F < 2.5 i T > 75)
+
+Ako nije catastrophic, proveri safe uslov:
+
+safe ako:
+T <= 78
+i P <= 142
+i V <= 7
+i F >= 3.5
+
+Ako nije ni catastrophic ni safe:
+
+unstable
+
+Catastrophic ima prioritet nad safe proverom.
+
+
+E-ODLUKA_I_DOKAZ_JEDINSTVENOSTI
+
+Konačna odluka bira se sledećim redom:
+
+1. Catastrophic akcije se eliminišu ako postoji bar jedna ne-catastrophic akcija.
+
+2. Ako postoji jedna ili više safe akcija, bira se safe akcija.
+
+3. Ako postoji više safe akcija, bira se ona sa najmanjom cenom intervencije:
+
+cost = 0.40 * |H| + 0.30 * R + 0.20 * |S| + 0.10 * |C|
+
+4. Ako nema safe akcije, bira se unstable akcija sa najmanjim maksimalnim relativnim prekoračenjem safe granica.
+
+Relativna prekoračenja safe granica računaju se ovako:
+
+excess_T = max(0, (T3 - 78) / 78)
+
+excess_P = max(0, (P3 - 142) / 142)
+
+excess_V = max(0, (V3 - 7) / 7)
+
+excess_F = max(0, (3.5 - F3) / 3.5)
+
+Za akciju je:
+
+max_relative_excess = max(excess_T, excess_P, excess_V, excess_F)
+
+5. Ako dve unstable akcije imaju isti max_relative_excess u toleranciji 1e-9, bira se ona sa manjom cenom intervencije.
+
+6. Ako je i dalje nerešeno, unique_best_action = false.
+
+7. Ako je najbolja akcija strogo jedinstvena, unique_best_action = true.
+
+U ovoj sekciji jasno napiši:
+
+recommended_action
+recommended_action_index
+unique_best_action
+
+Takođe moraš dokazati zašto ostale akcije nisu izabrane.
+
+Posebno proveri mogućnost da fuzzy sloj predloži agresivnu akciju, ali dinamička simulacija pokaže da ta akcija ima loš sekundarni efekat. Ako se to dogodi, moraš eksplicitno objasniti zašto konačna odluka nije ista kao početna fuzzy odluka.
+
+
+F-ZIG_KOD
+
+Napiši kompletan Zig program koji:
+
+1. koristi očitane nominalne vrednosti sa slika kao ulaz;
+2. računa fuzzy pripadnosti;
+3. računa aktivacije pravila;
+4. računa agregirani rizik;
+5. određuje početnu fuzzy odluku;
+6. simulira sve četiri akcije kroz tri takta;
+7. klasifikuje ishode;
+8. bira konačnu akciju po zadatom kriterijumu;
+9. ispisuje RESULTS_JSON.
+
+Kod mora biti celovit i izvršiv kao jedna .zig datoteka.
+
+Zig kod ne sme biti pseudokod. Mora sadržati sve strukture, funkcije, konstante i main.
+
+Ako nisi siguran u verziju Zig standardne biblioteke, izbegavaj API pozive koji zavise od novijih verzija. Fokus je na korektnosti algoritma.
+
+
+RESULTS_JSON
+
+Na kraju odgovora moraš dati validan JSON objekat sledeće strukture.
+
+Vrednosti u JSON-u moraju biti usklađene sa stvarnim proračunom. Ne smeš koristiti placeholder vrednosti.
+
+{
+  "sensor_readings": {
+    "T_C": 0.0,
+    "P_kPa": 0.0,
+    "F_L_min": 0.0,
+    "V_mm_s": 0.0,
+    "dPdt_kPa_min": 0.0
+  },
+  "reading_intervals": {
+    "T_C": [0.0, 0.0],
+    "P_kPa": [0.0, 0.0],
+    "F_L_min": [0.0, 0.0],
+    "V_mm_s": [0.0, 0.0],
+    "dPdt_kPa_min": [0.0, 0.0]
+  },
+  "fuzzy_memberships": {
+    "T": {
+      "normal": 0.0,
+      "high": 0.0,
+      "critical": 0.0
+    },
+    "P": {
+      "normal": 0.0,
+      "high": 0.0,
+      "critical": 0.0
+    },
+    "F": {
+      "low": 0.0,
+      "adequate": 0.0
+    },
+    "V": {
+      "stable": 0.0,
+      "unstable": 0.0
+    },
+    "dPdt": {
+      "steady": 0.0,
+      "rising_fast": 0.0
+    }
+  },
+  "rule_activations": {
+    "R1": 0.0,
+    "R2": 0.0,
+    "R3": 0.0,
+    "R4": 0.0,
+    "R5": 0.0
+  },
+  "aggregated_risk": 0.0,
+  "initial_fuzzy_decision": "MONITOR",
+  "actions": {
+    "A0_MONITOR": {
+      "states": [
+        {"t": 1, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0},
+        {"t": 2, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0},
+        {"t": 3, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0}
+      ],
+      "outcome": "safe",
+      "max_relative_excess": 0.0,
+      "intervention_cost": 0.0
+    },
+    "A1_DERATE": {
+      "states": [
+        {"t": 1, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0},
+        {"t": 2, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0},
+        {"t": 3, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0}
+      ],
+      "outcome": "safe",
+      "max_relative_excess": 0.0,
+      "intervention_cost": 0.0
+    },
+    "A2_CONTROLLED_RELIEF": {
+      "states": [
+        {"t": 1, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0},
+        {"t": 2, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0},
+        {"t": 3, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0}
+      ],
+      "outcome": "safe",
+      "max_relative_excess": 0.0,
+      "intervention_cost": 0.0
+    },
+    "A3_EMERGENCY_MODE": {
+      "states": [
+        {"t": 1, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0},
+        {"t": 2, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0},
+        {"t": 3, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0}
+      ],
+      "outcome": "safe",
+      "max_relative_excess": 0.0,
+      "intervention_cost": 0.0
+    }
+  },
+  "recommended_action": "CONTROLLED_RELIEF",
+  "recommended_action_index": 2,
+  "unique_best_action": true
+}
+
+Završi odgovor markerom:
+
+<END>
