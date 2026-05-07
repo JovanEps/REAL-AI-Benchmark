@@ -14,8 +14,8 @@ Bez interneta, osim za potrebe upoznavanja sa aktuelnom ZIG 0.16.x sintaksom iz 
 Bez meta-komentara, planova, izgovora i “thinking process”.
 Dozvoljen je TAČNO JEDAN Zig code-block.
 Kod mora biti kompletan i kompajlabilan kao jedan fajl.
+Koristi novu Zig 0.16.x sintaksu ili novije od 2026.
 Koristi samo Zig standardnu biblioteku (std).
-Kod neka bude kompatibilan sa Zig 0.12+.
 Zabranjeno: pseudokod, TODO, ..., hardkodovanje finalnog rešenja bez rešavača.
 Rešenje mora stvarno da rešava zadati problem, ne da samo ispiše unapred poznatu matricu.
 ZADATAK

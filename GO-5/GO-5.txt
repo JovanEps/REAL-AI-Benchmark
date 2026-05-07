@@ -22,8 +22,8 @@ PRAVILA
 - Bez meta-komentara, planova, izgovora i “thinking process”.
 - Dozvoljen je TAČNO JEDAN Zig code-block.
 - Kod mora biti kompletan i kompajlabilan kao jedan fajl.
+- Kod mora biti kompatibilan sa Zig 0.16.x ili novijom verzijom sintakse iz 2026.
 - Koristi samo Zig standardnu biblioteku (std).
-- Kod mora biti kompatibilan sa Zig 0.16.x ili novijom verzijom iz 2026.
 - Upotreba zastarelog obrasca `std.io.getStdOut().writer()` ili drugog pre-0.16 I/O API-ja tretira se kao greška kompatibilnosti.
 - Stari Zig obrasci koji nisu kompatibilni sa 0.16.x+ tretiraju se kao greška.
 - Zabranjeno: pseudokod, TODO, ..., hardkodovanje konačnih izlaza, hardkodovanje pobedničkog kandidata, hardkodovanje pozicije greške, hardkodovanje correction tuple, hardkodovanje RESULTS_JSON bez stvarnog rešavača.
