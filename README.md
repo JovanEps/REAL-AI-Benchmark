@@ -30,13 +30,19 @@ REAL-AI-Benchmark/
 ├── SPONSORSHIP.md
 ├── LICENSE
 ├── CITATION.cff
+├── CHANGELOG.md
+├── REAL-AI-Bench-Linkedin-promo.png
+├── SPONSORSHIP.md
+├── zenodo.json
 ├── assets/
 │   ├── logo.png
 │   └── social-preview.png
 ├── docs/
+│   ├── benchmark-integrity.md
 │   ├── evaluation-methodology.md
-│   ├── scoring-rubric.md
-│   └── reproducibility.md
+│   ├── license-and-citation.md
+│   ├── reproducibility.md
+│   └── scoring-rubric.md
 ├── GO-1/
 │   └── GO-1.txt
 ├── GO-2/
