@@ -1,3 +1,19 @@
+================================================================================
+NOTE / IMPORTANT
+================================================================================
+This textual no-VI instance is not numerically equivalent to the visual GO-6
+instance.
+
+It serves as an independent control variant of the same physical–fuzzy–dynamic
+problem.
+
+The initial values and the final optimal action are intentionally different.
+
+SRB:	Ova tekstualna no-VI instanca nije numerički ekvivalent vizuelnoj GO-6 instanci.
+	Služi kao nezavisna kontrolna varijanta istog fizičko-fuzzy-dinamičkog problema.
+	Polazne vrednosti i konačna optimalna akcija namerno su drugačiji.
+================================================================================
+
 GO-6: PHYS-CAUSAL-FUZZY BENCHMARK
 Analog Sensor Fusion, Fuzzy Logic and Short-Horizon Physical Dynamics
 
@@ -25,19 +41,19 @@ Analogna očitavanja instrumenata data su kao nominalne vrednosti i intervali o�
 
 Nominalna očitavanja:
 
-T  = 68.5 °C
-P  = 132.0 kPa
-F  = 4.2 L/min
-V  = 5.6 mm/s
-D  = dP/dt = +2.1 kPa/min
+T = 76.0 °C
+P = 130.0 kPa
+F = 4.1 L/min
+V = 3.8 mm/s
+D = dP/dt = +2.0 kPa/min
 
 Intervali očitavanja:
 
-T ∈ [68.0, 69.0] °C
-P ∈ [131.0, 133.0] kPa
-F ∈ [4.0, 4.4] L/min
-V ∈ [5.4, 5.8] mm/s
-D ∈ [1.9, 2.3] kPa/min
+T ∈ [75.8, 76.2] °C
+P ∈ [129.5, 130.5] kPa
+F ∈ [4.0, 4.2] L/min
+V ∈ [3.6, 4.0] mm/s
+D ∈ [1.8, 2.2] kPa/min
 
 Gde je:
 
@@ -228,11 +244,11 @@ Simuliraj sistem 3 takta unapred za svaku akciju posebno.
 
 Početno stanje je:
 
-T0 = 68.5
-P0 = 132.0
-F0 = 4.2
-V0 = 5.6
-D  = 2.1
+T0 = 76.0
+P0 = 130.0
+F0 = 4.1
+V0 = 3.8
+D = 2.0
 
 U ovoj verziji testa D se tokom tri takta tretira kao konstantno očitani trend pritiska.
 
