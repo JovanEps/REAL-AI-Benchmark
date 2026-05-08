@@ -419,9 +419,9 @@ Vrednosti u JSON-u moraju biti usklađene sa stvarnim proračunom. Ne smeš kori
       "intervention_cost": 0.0
     }
   },
-  "recommended_action": "CONTROLLED_RELIEF",
-  "recommended_action_index": 2,
-  "unique_best_action": true
+  "recommended_action": "one of: MONITOR, DERATE, CONTROLLED_RELIEF, EMERGENCY_MODE",
+  "recommended_action_index": "integer in [0, 3]",
+  "unique_best_action": "boolean"
 }
 
 Završi odgovor markerom:
