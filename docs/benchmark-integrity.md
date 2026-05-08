@@ -1,4 +1,4 @@
-\# Benchmark Integrity Policy
+# **Benchmark Integrity Policy**
 
 
 
@@ -8,8 +8,7 @@ discipline, code generation, and reproducibility.
 
 
 
-\## Public benchmark files must not contain
-
+## Public benchmark files must not contain
 
 
 \- reference answers;
@@ -30,8 +29,8 @@ discipline, code generation, and reproducibility.
 
 
 
-\## Public benchmark files may contain
 
+## Public benchmark files may contain
 
 
 \- full problem statements;
@@ -52,7 +51,7 @@ discipline, code generation, and reproducibility.
 
 
 
-\## GO-6 rule
+## GO-6 rule
 
 
 
@@ -62,7 +61,7 @@ treated as numerically equivalent to the visual GO-6 instance.
 
 
 
-\## Evaluation principle
+## Evaluation principle
 
 
 
