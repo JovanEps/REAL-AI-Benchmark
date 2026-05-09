@@ -56,8 +56,7 @@ REAL-AI-Benchmark/
 ├── GO-6 Ultimate reality/
 │   ├── GO-6.txt
 │   ├── GO-6-old-simple-no-VI.txt
-│   ├── PIC1.png ... PIC5.png
-│   └── GO-6_Physical_AI_Benchmark_Methodology_EN.pdf
+│   └── PIC1.png ... PIC5.png
 ├── Methodology/
 │   └── methodology papers and draft reports
 └── results/
