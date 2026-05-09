@@ -1,69 +1,83 @@
 GO-6: ANALOGNO-FIZIČKI FUZZY-DINAMIČKI TEST ODLUČIVANJA
+Revizija 1.1 — anti-leak verzija
 
 U ovom zadatku rešavaš problem realnog fizičkog sistema na osnovu pet analognih instrumenata prikazanih na priloženim slikama.
 
 Priložene slike su:
-
 PIC1.png
 PIC2.png
 PIC3.png
 PIC4.png
 PIC5.png
 
-Slike predstavljaju analogna merenja fizičkih veličina:
+Slike predstavljaju analogna merenja fizičkih veličina potrebnih za model sistema, ali redosled slika nije garantovan i nije unapred mapiran na promenljive modela.
 
-PIC1.png -> temperatura T u °C
-PIC2.png -> pritisak P u kPa
-PIC3.png -> protok F u L/min
-PIC4.png -> vibracija V u mm/s
-PIC5.png -> trend pritiska D = dP/dt u kPa/min
+Na instrumentima se mogu nalaziti oznake fizičke veličine, simbol, jedinica i skala. Model mora samostalno identifikovati šta svaka slika meri na osnovu vizuelnog sadržaja instrumenta, očitati nominalnu vrednost i odrediti razuman interval neizvesnosti očitavanja.
 
-Ovo nije zadatak memorisanja, prepoznavanja šablona iz trening skupa ili tekstualnog nagađanja. Ovo je zadatak očitavanja analognih instrumenata, fizičkog rezonovanja, fuzzy inferencije, numeričke simulacije i izbora upravljačke akcije.
+Potrebne fizičke veličine za model su:
+T — temperatura u °C
+P — pritisak u kPa
+F — protok u L/min
+V — vibracija u mm/s
+D — trend pritiska dP/dt u kPa/min
 
-Ako ne možeš da vidiš slike, jasno napiši da ne možeš kompletno rešiti zadatak. Ne smeš izmišljati očitavanja. Ako slike vidiš, moraš ih očitati što preciznije možeš i dalje računati na osnovu sopstvenog očitavanja.
+Nije dozvoljeno pretpostaviti da PIC1 odgovara T, PIC2 odgovara P, PIC3 odgovara F, PIC4 odgovara V ili PIC5 odgovara D. Ako model napravi takvu pretpostavku bez vizuelnog očitavanja oznake, jedinice, skale ili semantičkog sadržaja instrumenta, odgovor se smatra metodološki slabim.
 
-Sva očitavanja tretiraj kao fizička merenja ograničene preciznosti. Zato za svaku očitanu veličinu moraš navesti nominalnu vrednost i razuman interval neizvesnosti očitavanja.
+U ovoj GO-6 reviziji svih pet priloženih slika mora biti iskorišćeno: tačno jedna slika za T, tačno jedna za P, tačno jedna za F, tačno jedna za V i tačno jedna za D. Ako model ne može pouzdano da izvrši mapiranje, mora to eksplicitno prijaviti umesto da izmisli očitavanje ili proizvoljno dodeli sliku promenljivoj.
+
+Ovo nije zadatak memorisanja, prepoznavanja šablona iz trening skupa ili tekstualnog nagađanja. Ovo je zadatak očitavanja analognih instrumenata, identifikacije fizičkih veličina, fizičkog rezonovanja, fuzzy inferencije, numeričke simulacije i izbora upravljačke akcije.
+
+Ako ne možeš da vidiš slike, jasno napiši da ne možeš kompletno rešiti zadatak. Ne smeš izmišljati očitavanja, oznake instrumenata ili redosled slika. Ako slike vidiš, moraš ih očitati što preciznije možeš i dalje računati isključivo na osnovu sopstvenog očitavanja.
+
+Sva očitavanja tretiraj kao fizička merenja ograničene preciznosti. Za svaku očitanu veličinu moraš navesti nominalnu vrednost i razuman interval neizvesnosti očitavanja.
 
 Odgovor mora imati sledeće sekcije, tačno ovim redosledom:
 
-A-OCITAVANJE_ANALOGNIH_INSTRUMENATA
-B-FIZICKA_KONZISTENTNOST
-C-FUZZY_INFERENCIJA
-D-DINAMICKA_SIMULACIJA
-E-ODLUKA_I_DOKAZ_JEDINSTVENOSTI
-F-ZIG_KOD
+A - OCITAVANJE_ANALOGNIH_INSTRUMENATA
+B - FIZICKA_KONZISTENTNOST
+C - FUZZY_INFERENCIJA
+D - DINAMICKA_SIMULACIJA
+E - ODLUKA_I_DOKAZ_JEDINSTVENOSTI
+F - ZIG_KOD
 RESULTS_JSON
 <END>
 
 
-A-OCITAVANJE_ANALOGNIH_INSTRUMENATA
+A - OCITAVANJE_ANALOGNIH_INSTRUMENATA
 
 Očitaj vrednosti sa pet priloženih analognih instrumenata.
 
-Za svaku veličinu navedi:
-
-1. sliku iz koje je očitana vrednost;
-2. nominalno očitavanje;
-3. interval očitavanja;
-4. kratko objašnjenje kako je vrednost očitana sa skale.
-
-Koristi sledeće jedinice:
-
-T  -> °C
-P  -> kPa
-F  -> L/min
-V  -> mm/s
-D  -> kPa/min
+Za svaku sliku moraš navesti:
+1. ID slike;
+2. detektovanu oznaku ili naziv instrumenta;
+3. detektovanu fizičku veličinu;
+4. detektovani simbol ako postoji;
+5. detektovanu jedinicu;
+6. nominalno očitavanje;
+7. interval očitavanja;
+8. kratko objašnjenje kako je vrednost očitana sa skale;
+9. da li se ta slika koristi kao T, P, F, V ili D u modelu.
 
 Prikaži tabelu oblika:
 
-| Veličina | Slika | Nominalno očitavanje | Interval očitavanja | Obrazloženje |
-| -------- | ----- | -------------------: | ------------------: | ------------ |
+| Slika | Detektovana oznaka | Fizička veličina | Simbol | Jedinica | Nominalno očitavanje | Interval očitavanja | Uloga u modelu | Obrazloženje |
+| ----- | ------------------ | ---------------- | ------ | -------- | -------------------: | ------------------: | -------------- | ------------ |
+
+Posle tabele prikaži eksplicitno mapiranje ulaza modela kao tabelu sa tačno pet redova.
+
+Redosled redova nije propisan. Svaki red mora povezati jednu identifikovanu sliku sa jednom od modelskih promenljivih T, P, F, V ili D. Svaka model promenljiva mora se pojaviti tačno jednom.
+
+Tabela mapiranja mora imati oblik:
+
+| Promenljiva modela | Izvorna slika | Detektovana fizička veličina | Očitana vrednost | Jedinica | Interval |
+| ------------------ | ------------- | ---------------------------- | ---------------: | ------- | -------- |
 
 Ne smeš preskočiti interval očitavanja. Ako skala nije savršeno jasna, moraš navesti širi interval neizvesnosti.
 
+Ako bilo koja od potrebnih fizičkih veličina T, P, F, V ili D nije pouzdano identifikovana iz slika, moraš to eksplicitno označiti i ne smeš nastaviti kao da je očitavanje sigurno.
 
-B-FIZICKA_KONZISTENTNOST
+
+B - FIZICKA_KONZISTENTNOST
 
 Na osnovu očitanih vrednosti objasni fizičko stanje sistema.
 
@@ -78,7 +92,7 @@ Posebno razmotri:
 Ova sekcija mora biti kvalitativna, ali zasnovana na očitanim numeričkim vrednostima.
 
 
-C-FUZZY_INFERENCIJA
+C - FUZZY_INFERENCIJA
 
 Koristi sledeće fuzzy skupove.
 
@@ -187,7 +201,7 @@ risk >= 0.80                  -> EMERGENCY_MODE
 Važno: početna fuzzy odluka nije nužno konačna odluka. Konačna odluka se donosi tek posle dinamičke simulacije posledica svih akcija.
 
 
-D-DINAMICKA_SIMULACIJA
+D - DINAMICKA_SIMULACIJA
 
 Simuliraj fizički sistem za tri diskretna takta.
 
@@ -257,7 +271,7 @@ unstable
 Catastrophic ima prioritet nad safe proverom.
 
 
-E-ODLUKA_I_DOKAZ_JEDINSTVENOSTI
+E - ODLUKA_I_DOKAZ_JEDINSTVENOSTI
 
 Konačna odluka bira se sledećim redom:
 
@@ -302,127 +316,132 @@ Takođe moraš dokazati zašto ostale akcije nisu izabrane.
 Posebno proveri mogućnost da fuzzy sloj predloži agresivnu akciju, ali dinamička simulacija pokaže da ta akcija ima loš sekundarni efekat. Ako se to dogodi, moraš eksplicitno objasniti zašto konačna odluka nije ista kao početna fuzzy odluka.
 
 
-F-ZIG_KOD
+F - ZIG_KOD
 
 Napiši kompletan Zig program koji:
+1. koristi očitane nominalne vrednosti sa slika kao numerički ulaz;
+2. u kodu jasno mapira identifikovane slike na promenljive T, P, F, V i D;
+3. računa fuzzy pripadnosti;
+4. računa aktivacije pravila;
+5. računa agregirani rizik;
+6. određuje početnu fuzzy odluku;
+7. simulira sve četiri akcije kroz tri takta;
+8. klasifikuje ishode;
+9. bira konačnu akciju po zadatom kriterijumu;
+10. ispisuje tačno sledeći izlazni blok:
 
-1. koristi očitane nominalne vrednosti sa slika kao ulaz;
-2. računa fuzzy pripadnosti;
-3. računa aktivacije pravila;
-4. računa agregirani rizik;
-5. određuje početnu fuzzy odluku;
-6. simulira sve četiri akcije kroz tri takta;
-7. klasifikuje ishode;
-8. bira konačnu akciju po zadatom kriterijumu;
-9. ispisuje RESULTS_JSON.
+RESULTS_JSON
+{ validan JSON objekat }
+<END>
 
-Kod mora biti celovit i izvršiv kao jedna .zig datoteka.
+Zig program ne mora i ne treba da učitava PNG slike. Vizuelno očitavanje se radi u A-sekciji odgovora. Zig program koristi numeričke vrednosti i mapiranje dobijene u A-sekciji kao već očitane ulaze, zatim reprodukuje fuzzy inferenciju, dinamičku simulaciju, klasifikaciju i izbor akcije.
 
-Zig kod ne sme biti pseudokod. Mora sadržati sve strukture, funkcije, konstante i main.
+Kod mora biti celovit i izvršiv kao jedna .zig datoteka. Zig kod ne sme biti pseudokod. Mora sadržati sve strukture, funkcije, konstante i main.
 
-Ako nisi siguran u verziju Zig standardne biblioteke, izbegavaj API pozive koji zavise od novijih verzija. Fokus je na korektnosti algoritma.
+Kod mora biti kompatibilan sa Zig 0.16+ sintaksom koliko je to moguće. Ako nisi siguran u standardnu biblioteku, koristi `std.debug.print` umesto verzijski osetljivih IO API poziva. Ne koristi zastarele ili nesigurne API pretpostavke.
+
+Kod ne sme samo hardkodovati finalni odgovor bez simulacije. Mora imati funkcije ili jasno izdvojene blokove za:
+- fuzzy membership;
+- jedan dinamički korak;
+- simulaciju akcije;
+- klasifikaciju ishoda;
+- izračunavanje max_relative_excess;
+- izbor najbolje akcije.
+
+Za pouzdanost koda očekuje se:
+- jasna tipizacija struktura State, Action, Outcome i SimResult;
+- izdvojena funkcija za dinamički korak ili simulaciju;
+- izdvojena funkcija za klasifikaciju ishoda;
+- izdvojena funkcija za izbor najbolje akcije;
+- bez dupliranih funkcija;
+- bez neinicijalizovanih izlaza koji mogu biti korišćeni;
+- bez verzijski nekompatibilnih IO poziva;
+- bez oslanjanja na finalni ručno napisani JSON umesto na stvarno izračunate vrednosti.
+
+Ako program ne može da proizvede validan JSON ili nema jasnu logiku odlučivanja, Zig deo se ocenjuje kao neuspešan čak i ako tekstualno rešenje izgleda tačno.
 
 
 RESULTS_JSON
 
-Na kraju odgovora moraš dati validan JSON objekat sledeće strukture.
+Na kraju odgovora moraš dati validan JSON objekat koji ne sme sadržati placeholder vrednosti.
 
-Vrednosti u JSON-u moraju biti usklađene sa stvarnim proračunom. Ne smeš koristiti placeholder vrednosti.
+PAŽNJA: Sledeći opis nije JSON koji treba prepisati. To je obavezna logička šema polja. Završni RESULTS_JSON mora biti validan JSON bez šematskih markera.
 
-{
-  "sensor_readings": {
-    "T_C": 0.0,
-    "P_kPa": 0.0,
-    "F_L_min": 0.0,
-    "V_mm_s": 0.0,
-    "dPdt_kPa_min": 0.0
-  },
-  "reading_intervals": {
-    "T_C": [0.0, 0.0],
-    "P_kPa": [0.0, 0.0],
-    "F_L_min": [0.0, 0.0],
-    "V_mm_s": [0.0, 0.0],
-    "dPdt_kPa_min": [0.0, 0.0]
-  },
-  "fuzzy_memberships": {
-    "T": {
-      "normal": 0.0,
-      "high": 0.0,
-      "critical": 0.0
-    },
-    "P": {
-      "normal": 0.0,
-      "high": 0.0,
-      "critical": 0.0
-    },
-    "F": {
-      "low": 0.0,
-      "adequate": 0.0
-    },
-    "V": {
-      "stable": 0.0,
-      "unstable": 0.0
-    },
-    "dPdt": {
-      "steady": 0.0,
-      "rising_fast": 0.0
-    }
-  },
-  "rule_activations": {
-    "R1": 0.0,
-    "R2": 0.0,
-    "R3": 0.0,
-    "R4": 0.0,
-    "R5": 0.0
-  },
-  "aggregated_risk": 0.0,
-  "initial_fuzzy_decision": "MONITOR",
-  "actions": {
-    "A0_MONITOR": {
-      "states": [
-        {"t": 1, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0},
-        {"t": 2, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0},
-        {"t": 3, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0}
-      ],
-      "outcome": "safe",
-      "max_relative_excess": 0.0,
-      "intervention_cost": 0.0
-    },
-    "A1_DERATE": {
-      "states": [
-        {"t": 1, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0},
-        {"t": 2, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0},
-        {"t": 3, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0}
-      ],
-      "outcome": "safe",
-      "max_relative_excess": 0.0,
-      "intervention_cost": 0.0
-    },
-    "A2_CONTROLLED_RELIEF": {
-      "states": [
-        {"t": 1, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0},
-        {"t": 2, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0},
-        {"t": 3, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0}
-      ],
-      "outcome": "safe",
-      "max_relative_excess": 0.0,
-      "intervention_cost": 0.0
-    },
-    "A3_EMERGENCY_MODE": {
-      "states": [
-        {"t": 1, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0},
-        {"t": 2, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0},
-        {"t": 3, "T": 0.0, "P": 0.0, "F": 0.0, "V": 0.0}
-      ],
-      "outcome": "safe",
-      "max_relative_excess": 0.0,
-      "intervention_cost": 0.0
-    }
-  },
-  "recommended_action": "one of: MONITOR, DERATE, CONTROLLED_RELIEF, EMERGENCY_MODE",
-  "recommended_action_index": "integer in [0, 3]",
-  "unique_best_action": "boolean"
-}
+Ne smeš ostaviti placeholder vrednosti, prazne stringove, "string", "number", "<number>", "...", "same structure", 0.0 kao šematsku vrednost, niti komentare. Sva polja moraju biti popunjena stvarnim očitanim ili izračunatim vrednostima.
+
+JSON ne sme pretpostaviti unapred poznato mapiranje PIC slika na fizičke veličine. Zato prvo mora sadržati listu očitanih instrumenata, a zatim eksplicitno mapiranje očitanih instrumenata na model promenljive T, P, F, V i D.
+
+Obavezna logička struktura JSON-a:
+
+root object:
+  instrument_readings: array of exactly 5 objects
+    each object:
+      image_id: string, one of PIC1.png ... PIC5.png
+      detected_label: string read or inferred from instrument face
+      detected_quantity: string, physical quantity inferred from label, unit and scale
+      detected_symbol: one of T, P, F, V, D
+      detected_unit: string
+      nominal_reading: number
+      reading_interval: array [number_min, number_max]
+      scale_reading_explanation: string
+      used_as_model_variable: one of T, P, F, V, D
+
+  model_input_bindings: array of exactly 5 objects
+    each object:
+      model_variable: one of T, P, F, V, D
+      source_image_id: one of PIC1.png ... PIC5.png
+      quantity: string
+      value: number
+      unit: string
+      interval: array [number_min, number_max]
+
+  fuzzy_memberships: array of exactly 5 objects
+    each object:
+      model_variable: one of T, P, F, V, D
+      quantity: one of temperature, pressure, flow, vibration, pressure_trend
+      sets: object containing the relevant fuzzy set names and numeric membership values
+
+  rule_activations: object
+    R1: number
+    R2: number
+    R3: number
+    R4: number
+    R5: number
+
+  aggregated_risk: number
+
+  initial_fuzzy_decision: one of MONITOR, DERATE, CONTROLLED_RELIEF, EMERGENCY_MODE
+
+  actions: object with exactly these keys:
+    A0_MONITOR
+    A1_DERATE
+    A2_CONTROLLED_RELIEF
+    A3_EMERGENCY_MODE
+
+    each action object must contain:
+      states: array of exactly 3 objects
+        each state object:
+          t: 1, 2 or 3
+          T: number
+          P: number
+          F: number
+          V: number
+      outcome: one of safe, unstable, catastrophic
+      max_relative_excess: number
+      intervention_cost: number
+
+  recommended_action: one of MONITOR, DERATE, CONTROLLED_RELIEF, EMERGENCY_MODE
+  recommended_action_index: integer 0, 1, 2 or 3
+  unique_best_action: boolean
+
+Dodatni uslovi za validnost JSON-a:
+1. `instrument_readings` mora imati tačno 5 elemenata.
+2. `model_input_bindings` mora imati tačno 5 elemenata.
+3. Svaka od promenljivih T, P, F, V i D mora se pojaviti tačno jednom u `model_input_bindings`.
+4. Svaka od slika PIC1.png, PIC2.png, PIC3.png, PIC4.png i PIC5.png mora se pojaviti tačno jednom u `instrument_readings`.
+5. Nijedna slika ne sme biti označena kao `unused` u ovoj GO-6 reviziji.
+6. Sve akcije A0, A1, A2 i A3 moraju biti potpuno eksplicitno popunjene.
+7. JSON mora biti validan: bez komentara, bez trailing comma, bez markdown teksta unutar JSON objekta.
 
 Završi odgovor markerom:
 
