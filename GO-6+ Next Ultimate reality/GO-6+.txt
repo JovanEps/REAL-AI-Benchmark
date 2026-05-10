@@ -1,0 +1,633 @@
+# GO-6+ NEXT ULTIMATE REALITY - ANALOGNO-FIZIČKI FUZZY-DINAMIČKI TEST ROBUSNOG ODLUČIVANJA
+
+Priložene slike su:
+Fig-1.png
+Fig-2.png
+Fig-3.png
+Fig-4.png
+Fig-5.png
+Fig-6.png
+Fig-7.png
+Fig-8.png
+Fig-9.png
+
+Redosled slika nije garantovan. Slike nisu unapred mapirane na promenljive modela.
+
+Svaka slika prikazuje analogni instrument. Neki instrumenti su relevantni za fizički model, a neki su nerelevantni panel-indikatori. Rešenje mora samostalno identifikovati šta svaka slika meri na osnovu vidljive oznake instrumenta, skale, jedinice, kazaljke i fizičkog konteksta.
+
+Za očitavanje se sme koristiti samo vidljivi sadržaj slike. Ne koristi naziv fajla, redosled fajlova, metapodatke slike, prethodne zadatke, memorisanu mapu slika ili očekivani šablon. Ako se na slici slučajno pojavi direktan digitalni broj koji očigledno odaje trenutnu vrednost instrumenta, to moraš prijaviti kao mogući leakage artefakt i ne smeš ga koristiti kao zamenu za analogno očitavanje kazaljke.
+
+Relevantne promenljive fizičkog modela su:
+T       — procesna temperatura u °C
+P       — procesni pritisak u kPa
+F       — protok rashladnog fluida u L/min
+V       — vibracije u mm/s
+D       — trend pritiska dP/dt u kPa/min
+U_ctrl  — kontrolni napon regulatora u V
+
+Pored relevantnih instrumenata mogu postojati i nerelevantni instrumenti, na primer ambijentalna temperatura, baterijski/bus napon, obrtaji pumpe, RPM ili drugi panel indikatori. Takvi instrumenti se moraju očitati i klasifikovati kao decoy/ignored, ali se ne smeju koristiti u jednačinama sistema.
+
+Nije dozvoljeno pretpostaviti da je Fig-1 temperatura, Fig-2 pritisak itd. Takva pretpostavka bez vizuelne identifikacije instrumenta smatra se metodološkim promašajem.
+
+Ako ne možeš da vidiš slike, moraš to eksplicitno napisati i ne smeš izmišljati očitavanja, oznake instrumenata ili mapiranje slika. Ako slike vidiš, moraš ih očitati što preciznije možeš i računati isključivo iz sopstvenih očitavanja.
+
+Sva očitavanja tretiraj kao analogna fizička merenja ograničene preciznosti. Za svaki instrument moraš navesti nominalno očitavanje i interval neizvesnosti očitavanja.
+
+Ako instrument sadrži kalibracionu napomenu, nulti pomak, faktor skale ili offset, moraš razlikovati:
+raw_reading
+correction_applied
+corrected_value
+reading_interval
+
+Sva fuzzy i dinamička računanja rade se nad corrected_value vrednostima. Ako nema korekcije, corrected_value je jednak raw_reading.
+
+Ne smeš koristiti internet, memorisane odgovore, očekivani šablon iz prethodnih zadataka ili pretpostavljenu kanonsku mapu slika. Ovo je zadatak opažanja, fizičke interpretacije, numeričke discipline i izvršne verifikacije.
+
+Međukoraci se ne smeju zaokruživati za potrebe odluke. Tabele se mogu prikazati na 3 decimale, ali odluka, klasifikacija i JSON moraju biti zasnovani na punoj internoj preciznosti.
+
+Odgovor mora imati sledeće sekcije, tačno ovim redosledom:
+A-IDENTIFIKACIJA_I_OCITAVANJE_ANALOGNIH_INSTRUMENATA
+B-FIZICKA_KONZISTENTNOST_I_KALIBRACIJA_ULAZA
+C-FUZZY_INFERENCIJA
+D-NOMINALNA_DINAMICKA_SIMULACIJA
+E-PESSIMISTIC_SIMULACIJA_I_ROBUSTNOST
+F-ODLUKA_I_DOKAZ_JEDINSTVENOSTI
+G-ZIG_KOD
+RESULTS_JSON
+<END>
+
+Svaka sekcija mora sadržati kontrolne tačke navedene u zadatku. Ako preskočiš kontrolnu tačku, odgovor se smatra nepotpunim.
+
+---------------------------------------------------------------------
+
+A - IDENTIFIKACIJA_I_OCITAVANJE_ANALOGNIH_INSTRUMENATA
+
+Očitaj svih devet priloženih analognih instrumenata.
+
+Za svaku sliku moraš navesti:
+1. ID slike;
+2. detektovanu oznaku instrumenta;
+3. detektovanu fizičku veličinu;
+4. detektovani simbol, ako postoji;
+5. detektovanu jedinicu;
+6. da li je instrument relevantan za model ili je decoy;
+7. raw očitavanje;
+8. kalibracionu korekciju, ako postoji;
+9. corrected očitavanje;
+10. interval neizvesnosti očitavanja;
+11. kratko objašnjenje kako je vrednost očitana sa skale;
+12. nivo pouzdanosti očitavanja: low, medium ili high.
+
+Prikaži tabelu:
+| Slika | Detektovana oznaka | Fizička veličina | Simbol | Jedinica | Relevantnost | Raw očitavanje | Korekcija | Corrected vrednost | Interval očitavanja | Pouzdanost | Obrazloženje |
+| ----- | ------------------ | ---------------- | ------ | -------- | ------------ | -------------: | --------- | -----------------: | ------------------: | ---------- | ------------ |
+
+Posle toga prikaži mapiranje relevantnih ulaza modela. Tabela mora imati tačno šest redova, ali redosled redova nije propisan. Svaka od promenljivih T, P, F, V, D i U_ctrl mora se pojaviti tačno jednom.
+| Promenljiva modela | Izvorna slika | Corrected vrednost | Jedinica | Interval | Obrazloženje mapiranja |
+| ------------------ | ------------- | -----------------: | ------- | -------- | ---------------------- |
+
+Zatim prikaži tabelu ignorisanih/decoy instrumenata. Tabela mora imati tačno tri reda.
+| Ignorisana slika | Detektovana oznaka | Detektovana veličina | Jedinica | Zašto se ne koristi u modelu |
+| ---------------- | ------------------ | -------------------- | -------- | ---------------------------- |
+
+Kontrolne tačke za sekciju A:
+CP-A1: svih 9 slika mora biti obrađeno;
+CP-A2: tačno 6 slika mora biti mapirano na T, P, F, V, D i U_ctrl;
+CP-A3: tačno 3 slike moraju biti označene kao decoy/ignored;
+CP-A4: svaka od promenljivih T, P, F, V, D i U_ctrl mora imati tačno jedan izvor;
+CP-A5: raw i corrected vrednosti moraju biti jasno razlikovane;
+CP-A6: kalibracione oznake, ako postoje, moraju biti primenjene;
+CP-A7: nijedno dalja računanje ne sme koristiti decoy instrument;
+CP-A8: ako je U_ctrl izabran sa voltage instrumenta, objašnjeno je zašto je to kontrolni napon, a ne bus/battery voltage.
+
+---------------------------------------------------------------------
+
+B - FIZICKA_KONZISTENTNOST_I_KALIBRACIJA_ULAZA
+
+Objasni fizičko stanje sistema na osnovu corrected vrednosti iz sekcije A.
+
+Obavezno analiziraj:
+1. da li je temperatura povišena, normalna ili blizu kritične zone;
+2. da li je pritisak normalan, visok ili blizu kritične zone;
+3. da li je protok dovoljan za hlađenje;
+4. da li su vibracije stabilne ili nestabilne;
+5. da li trend pritiska ukazuje na stabilizaciju ili pogoršanje;
+6. kako U_ctrl utiče na rasterećenje pritiska i vibracioni stres;
+7. zašto decoy instrumenti ne ulaze u model;
+8. koje akcije mogu izgledati intuitivno dobre, ali fizički mogu biti opasne.
+
+Posebno objasni konflikt:
+- agresivno rasterećenje može brzo smanjiti pritisak;
+- ali agresivna akcija može povećati vibracije;
+- kontrolni napon U_ctrl može povećati efektivno rasterećenje;
+- ali |U_ctrl| istovremeno povećava vibracioni stres;
+- povećanje protoka može pomoći hlađenju;
+- ali pogrešno očitanje ili preskakanje kalibracije može promeniti konačnu odluku.
+
+Kontrolne tačke za sekciju B:
+CP-B1: objašnjene su sve relevantne veličine T, P, F, V, D i U_ctrl;
+CP-B2: objašnjen je fizički smisao raw/corrected razlike;
+CP-B3: objašnjeni su decoy instrumenti;
+CP-B4: objašnjen je konflikt između pritiska, protoka, vibracija i kontrole;
+CP-B5: jasno je navedeno zašto početna fuzzy odluka ne mora biti konačna akcija.
+
+---------------------------------------------------------------------
+
+C - FUZZY_INFERENCIJA
+
+Koristi corrected nominalne vrednosti iz sekcije A.
+
+Definicije fuzzy skupova:
+Za temperaturu T:
+normal(T):
+- 1.0 ako T <= 55
+- (70 - T) / 15 ako 55 < T < 70
+- 0.0 ako T >= 70
+
+high(T):
+- 0.0 ako T <= 55
+- (T - 55) / 15 ako 55 < T < 70
+- 1.0 ako 70 <= T <= 80
+- (90 - T) / 10 ako 80 < T < 90
+- 0.0 ako T >= 90
+
+critical(T):
+- 0.0 ako T <= 75
+- (T - 75) / 15 ako 75 < T < 90
+- 1.0 ako T >= 90
+
+Za pritisak P:
+normal(P):
+- 1.0 ako P <= 115
+- (135 - P) / 20 ako 115 < P < 135
+- 0.0 ako P >= 135
+
+high(P):
+- 0.0 ako P <= 115
+- (P - 115) / 20 ako 115 < P < 135
+- 1.0 ako 135 <= P <= 145
+- (155 - P) / 10 ako 145 < P < 155
+- 0.0 ako P >= 155
+
+critical(P):
+- 0.0 ako P <= 140
+- (P - 140) / 15 ako 140 < P < 155
+- 1.0 ako P >= 155
+
+Za protok F:
+low(F):
+- 1.0 ako F <= 3.0
+- (5.0 - F) / 2.0 ako 3.0 < F < 5.0
+- 0.0 ako F >= 5.0
+
+adequate(F):
+- 0.0 ako F <= 3.0
+- (F - 3.0) / 2.0 ako 3.0 < F < 5.0
+- 1.0 ako 5.0 <= F <= 7.0
+- (8.5 - F) / 1.5 ako 7.0 < F < 8.5
+- 0.0 ako F >= 8.5
+
+Za vibraciju V:
+stable(V):
+- 1.0 ako V <= 3.0
+- (5.5 - V) / 2.5 ako 3.0 < V < 5.5
+- 0.0 ako V >= 5.5
+
+unstable(V):
+- 0.0 ako V <= 4.0
+- (V - 4.0) / 2.5 ako 4.0 < V < 6.5
+- 1.0 ako V >= 6.5
+
+Za trend pritiska D:
+steady(D):
+- 1.0 ako |D| <= 0.5
+- (1.5 - |D|) / 1.0 ako 0.5 < |D| < 1.5
+- 0.0 ako |D| >= 1.5
+
+rising_fast(D):
+- 0.0 ako D <= 1.0
+- (D - 1.0) / 2.0 ako 1.0 < D < 3.0
+- 1.0 ako D >= 3.0
+
+Fuzzy pravila:
+R1 = min(high(T), high(P))
+R2 = min(high(P), rising_fast(D))
+R3 = min(low(F), high(T))
+R4 = min(unstable(V), high(P))
+R5 = max(critical(T), critical(P))
+
+Agregirani rizik:
+aggregated_risk = max(R1, R2, R3, R4, R5)
+
+Početna fuzzy odluka:
+ako aggregated_risk < 0.35:
+    MONITOR
+ako 0.35 <= aggregated_risk < 0.60:
+    DERATE
+ako 0.60 <= aggregated_risk < 0.80:
+    CONTROLLED_RELIEF
+ako aggregated_risk >= 0.80:
+    EMERGENCY_MODE
+
+Prikaži tabelu fuzzy pripadnosti:
+| Promenljiva | Fuzzy skup | Vrednost | Formula / objašnjenje |
+| ----------- | ---------- | -------: | --------------------- |
+
+Prikaži tabelu aktivacije pravila:
+| Pravilo | Izraz | Vrednost |
+| ------- | ----- | -------: |
+
+Kontrolne tačke za sekciju C:
+CP-C1: izračunati su svi fuzzy skupovi za T, P, F, V i D;
+CP-C2: izračunati su R1, R2, R3, R4 i R5;
+CP-C3: izračunat je aggregated_risk;
+CP-C4: data je početna fuzzy odluka;
+CP-C5: jasno je navedeno da početna fuzzy odluka nije automatski konačna akcija.
+
+---------------------------------------------------------------------
+
+D - NOMINALNA_DINAMICKA_SIMULACIJA
+
+Koristi corrected nominalne vrednosti iz sekcije A.
+
+Stanje sistema je:
+T — temperatura
+P — pritisak
+F — protok
+V — vibracija
+
+D i U_ctrl su ulazni parametri scenarija.
+
+Akcije:
+A0 MONITOR:
+H = +2.0
+R = 0.0
+S = +0.2
+C = 0.0
+
+A1 DERATE:
+H = +0.5
+R = 1.0
+S = +0.1
+C = +0.4
+
+A2 CONTROLLED_RELIEF:
+H = -0.5
+R = 4.0
+S = +0.3
+C = +0.8
+
+A3 EMERGENCY_MODE:
+H = -2.0
+R = 9.0
+S = +1.8
+C = -1.5
+
+A4 PHASED_RELIEF:
+H = -0.8
+R = 2.8
+S = +0.05
+C = +0.55
+
+Posebno pravilo za A4:
+U prvom taktu A4 koristi samo 60% R i 60% C.
+Od drugog takta A4 koristi puni R i puni C.
+H i S ostaju isti u svim taktovima.
+
+Za svaku akciju, u svakom taktu, prvo odredi efektivne parametre:
+R_eff = R_action + 0.15 * U_ctrl
+
+S_eff = S_action + 0.03 * abs(U_ctrl)
+
+Za A4 u prvom taktu, R_action i C su fazno redukovani na 60% pre računanja R_eff i F_next.
+
+Zatim izračunaj sledeće stanje:
+
+T_next =
+T + 0.18 * (P - 120) - 0.75 * F + H
+
+P_next =
+P + D + 0.12 * (T - 65) - R_eff
+
+V_next =
+V + 0.08 * (P - 125) + S_eff
++ 0.08 * max(0, V - 6.5)^2
+
+F_next =
+clamp(F + C, 0.0, 8.5)
+
+Definicija clamp:
+clamp(x, lo, hi) =
+- lo ako je x < lo
+- hi ako je x > hi
+- x inače
+
+Simuliraj tačno 3 takta za svaku akciju A0, A1, A2, A3 i A4.
+
+Ne zaokružuj međukorake za potrebe sledećeg takta. U tabeli možeš prikazati vrednosti na 3 decimale.
+
+Klasifikacija završnog stanja:
+catastrophic ako važi bilo šta:
+- T > 85
+- P > 150
+- V > 8
+- F < 2.5 i T > 75
+- pump_starvation = true
+
+pump_starvation = true ako je F = 0 u dva uzastopna takta.
+
+safe ako važi sve:
+- T <= 78
+- P <= 142
+- V <= 7
+- F >= 3.5
+- pump_starvation = false
+
+unstable u svim ostalim slučajevima.
+
+Za svaku akciju izračunaj max_relative_excess završnog stanja:
+excess_T = max(0, (T_final - 78) / 78)
+excess_P = max(0, (P_final - 142) / 142)
+excess_V = max(0, (V_final - 7) / 7)
+excess_F = max(0, (3.5 - F_final) / 3.5)
+
+max_relative_excess =
+max(excess_T, excess_P, excess_V, excess_F)
+
+Cena intervencije:
+intervention_cost =
+0.40 * abs(H) + 0.30 * R + 0.20 * abs(S) + 0.10 * abs(C)
+
+Za A4 koristi nominalne vrednosti H, R, S i C za cenu intervencije, ne fazno redukovane vrednosti iz prvog takta.
+
+Prikaži za svaku akciju tabelu:
+| takt | T | P | F | V | R_eff | S_eff |
+| ---: | -: | -: | -: | -: | ----: | ----: |
+
+Zatim prikaži rezime:
+| Akcija | Outcome | max_relative_excess | intervention_cost |
+| ------ | ------- | ------------------: | ----------------: |
+
+Kontrolne tačke za sekciju D:
+CP-D1: simulirane su sve akcije A0–A4;
+CP-D2: za A4 je pravilno primenjeno fazno pravilo;
+CP-D3: primenjeni su R_eff i S_eff;
+CP-D4: primenjen je nelinearni vibracioni član;
+CP-D5: primenjen je clamp protoka;
+CP-D6: izračunati su outcome, max_relative_excess i intervention_cost za svaku akciju;
+CP-D7: međukoraci nisu zaokruživani za sledeće taktove.
+
+---------------------------------------------------------------------
+
+E - PESSIMISTIC_SIMULACIJA_I_ROBUSTNOST
+
+Pored nominalne simulacije moraš uraditi i pesimističku simulaciju.
+
+Pessimistic scenario koristi intervale očitavanja iz sekcije A:
+T_pess = upper(T_interval)
+P_pess = upper(P_interval)
+F_pess = lower(F_interval)
+V_pess = upper(V_interval)
+D_pess = upper(D_interval)
+
+Za U_ctrl moraš proveriti oba kraja intervala:
+U_ctrl_low = lower(U_ctrl_interval)
+U_ctrl_high = upper(U_ctrl_interval)
+
+Za svaku akciju A0–A4 simuliraj dva pesimistička podslučaja:
+1. pessimistic_lowU  — koristi U_ctrl_low
+2. pessimistic_highU — koristi U_ctrl_high
+
+Za svaku akciju kao konačni pessimistic rezultat uzmi lošiji od ta dva podslučaja.
+
+Lošiji podslučaj se bira po sledećem redosledu:
+1. catastrophic je lošiji od unstable;
+2. unstable je lošiji od safe;
+3. ako su outcome kategorije iste, lošiji je veći max_relative_excess;
+4. ako je i to jednako, lošiji je veći intervention_cost.
+
+Za svaku akciju prikaži:
+| Akcija | Pessimistic U slučaj | Outcome | max_relative_excess | Razlog izbora lošijeg U |
+| ------ | -------------------- | ------- | ------------------: | ----------------------- |
+
+Zatim prikaži zajednički rezime nominalnog i pesimističkog rezultata:
+| Akcija | Nominal outcome | Pessimistic outcome | Nominal MRE | Pessimistic MRE | Worst-case MRE |
+| ------ | --------------- | ------------------- | ----------: | ---------------: | -------------: |
+
+worst_case_max_relative_excess =
+max(nominal_max_relative_excess, pessimistic_max_relative_excess)
+
+Kontrolne tačke za sekciju E:
+CP-E1: definisan je pessimistic scenario iz intervala;
+CP-E2: za U_ctrl proverena su oba kraja intervala;
+CP-E3: za svaku akciju izabran je lošiji U podslučaj;
+CP-E4: izračunat je pessimistic outcome za A0–A4;
+CP-E5: izračunat je worst_case_max_relative_excess za A0–A4;
+CP-E6: jasno je navedeno ako nominalna i robustna odluka nisu iste.
+
+---------------------------------------------------------------------
+
+F - ODLUKA_I_DOKAZ_JEDINSTVENOSTI
+
+Konačna odluka se ne donosi samo na osnovu početne fuzzy odluke i ne donosi se samo na osnovu nominalne simulacije. Konačna odluka mora biti robusna u odnosu na pesimistički scenario.
+
+Decision protocol:
+1. Izračunaj nominal scenario za A0–A4.
+2. Izračunaj pessimistic scenario za A0–A4.
+3. Ako postoji akcija koja nije catastrophic u pessimistic scenariju, eliminiši sve akcije koje jesu catastrophic u pessimistic scenariju.
+4. Ako postoji akcija koja je safe i u nominalnom i u pessimistic scenariju, biraj safe akciju sa najmanjim intervention_cost.
+5. Ako nema takve safe akcije, biraj akciju sa najmanjim worst_case_max_relative_excess.
+6. Ako je razlika worst_case_max_relative_excess <= 1e-9, koristi intervention_cost kao tie-break.
+7. Ako i dalje postoji izjednačenje, unique_best_action = false.
+8. Ako nominal_best_action nije isto što i robust_best_action, moraš eksplicitno objasniti razliku.
+9. recommended_action mora biti jednaka robust_best_action, osim ako dokažeš da robust_best_action ne postoji.
+
+Moraš izračunati:
+nominal_best_action
+robust_best_action
+recommended_action
+recommended_action_index
+unique_best_action
+robust_best_action_valid
+
+Prikaži tabelu odluke:
+| Akcija | Nominal outcome | Pessimistic outcome | Worst-case MRE | Cost | Eligible? | Razlog |
+| ------ | --------------- | ------------------- | -------------: | ---: | --------- | ------ |
+
+Zatim daj dokaz:
+- zašto su neke akcije eliminisane;
+- zašto safe akcije postoje ili ne postoje;
+- ako nema safe akcije, zašto je izabrana akcija sa najmanjim worst-case MRE;
+- da li je izbor jedinstven;
+- zašto početna fuzzy odluka nije nužno konačna odluka;
+- zašto nominal_best i robust_best jesu ili nisu isti.
+
+Kontrolne tačke za sekciju F:
+CP-F1: jasno je naveden nominal_best_action;
+CP-F2: jasno je naveden robust_best_action;
+CP-F3: jasno je naveden recommended_action;
+CP-F4: dokazana je eliminacija catastrophic akcija u pessimistic scenariju;
+CP-F5: pravilno je primenjen safe/cost kriterijum ili worst-case MRE kriterijum;
+CP-F6: dokazano je unique_best_action;
+CP-F7: objašnjena je razlika između fuzzy odluke i konačne robustne odluke.
+
+---------------------------------------------------------------------
+
+G - ZIG_KOD
+
+Napiši kompletan Zig program koji reprodukuje tvoje numeričko rešenje.
+
+Zig program ne treba i ne sme da čita PNG slike. Vizuelno očitavanje se radi u sekciji A. Zig program koristi numeričke corrected vrednosti i mapiranje iz sekcije A kao već očitane ulaze.
+
+Zig program mora:
+1. jasno definisati ulazne vrednosti T, P, F, V, D i U_ctrl;
+2. imati strukture:
+   State
+   Action
+   Scenario
+   Outcome
+   SimResult
+   Choice
+   InstrumentBinding
+3. imati funkcije:
+   clamp
+   isFiniteState
+   fuzzy membership funkcije
+   simulateStep
+   simulateAction
+   simulateScenario
+   classify
+   maxRelativeExcess
+   interventionCost
+   chooseRobustAction
+4. računati fuzzy pripadnosti;
+5. računati pravila R1–R5;
+6. računati aggregated_risk i initial_fuzzy_decision;
+7. simulirati nominal scenario za A0–A4;
+8. simulirati pessimistic scenario za A0–A4;
+9. proveriti oba kraja U_ctrl intervala u pessimistic scenariju;
+10. izračunati nominal_best_action;
+11. izračunati robust_best_action;
+12. izračunati recommended_action;
+13. ispisati validan RESULTS_JSON;
+14. završiti izlaz oznakom <END>.
+
+Kod mora biti celovit i izvršiv kao jedna .zig datoteka. Nije dozvoljen pseudokod.
+
+Kod mora biti kompatibilan sa Zig 0.16+ sintaksom koliko je moguće. Ako nisi siguran u standardnu biblioteku, koristi std.debug.print za ispis. Ne koristi zastarele ili verzijski rizične API pretpostavke kao što su stari std.io obrasci ako nisu kompatibilni sa ciljnom Zig verzijom.
+
+Kod ne sme samo hardkodovati finalni JSON bez simulacije. Mora imati stvarnu logiku za fuzzy izračunavanje, simulaciju, klasifikaciju i izbor akcije.
+
+Program mora ispisati sledeći format:
+
+RESULTS_JSON
+{ validan JSON objekat }
+<END>
+
+Ako program ne može da proizvede validan JSON ili nema jasnu logiku odlučivanja, Zig deo se smatra neuspešnim čak i ako je tekstualno rešenje tačno.
+
+Kontrolne tačke za sekciju G:
+CP-G1: kod je kompletan i samostalan;
+CP-G2: kod koristi corrected ulaze iz sekcije A;
+CP-G3: kod ne pokušava da čita PNG slike;
+CP-G4: kod računa fuzzy inferenciju;
+CP-G5: kod računa nominalni scenario;
+CP-G6: kod računa pessimistic scenario;
+CP-G7: kod proverava oba kraja U_ctrl intervala;
+CP-G8: kod bira robust_best_action;
+CP-G9: kod ispisuje RESULTS_JSON i <END>;
+CP-G10: kod ne hardkoduje rezultat bez simulacije.
+
+---------------------------------------------------------------------
+
+RESULTS_JSON
+
+Na kraju odgovora moraš dati validan JSON objekat.
+
+JSON mora biti rezultat prethodnih sekcija, a ne dekorativni sažetak. JSON ne sme unapred pretpostaviti mapiranje Fig slika na fizičke veličine. Zato prvo mora sadržati listu očitanih instrumenata, zatim eksplicitno mapiranje očitanih instrumenata na model promenljive.
+
+Ne smeš ostaviti placeholder vrednosti, prazne stringove, "string", "number", "<number>", "...", "same structure", komentare, markdown ili trailing comma.
+
+Obavezni top-level ključevi finalnog JSON objekta su:
+instrument_readings
+ignored_instruments
+model_input_bindings
+calibrated_inputs
+fuzzy_memberships
+rule_activations
+aggregated_risk
+initial_fuzzy_decision
+nominal_simulation
+pessimistic_simulation
+action_summary
+nominal_best_action
+robust_best_action
+recommended_action
+recommended_action_index
+unique_best_action
+robust_best_action_valid
+
+Obavezni sadržaj:
+instrument_readings:
+- tačno 9 objekata, po jedan za svaku sliku Fig-1.png do Fig-9.png;
+- svaki objekat mora sadržati: image_id, detected_label, detected_quantity, detected_symbol, detected_unit, is_used_in_model, raw_value, correction_applied, corrected_value, reading_interval, role, confidence.
+
+ignored_instruments:
+- tačno 3 objekta;
+- svaki objekat mora sadržati: image_id, detected_label, detected_quantity, detected_unit, reason_ignored.
+
+model_input_bindings:
+- tačno 6 objekata;
+- T, P, F, V, D i U_ctrl moraju se pojaviti tačno jednom;
+- svaki objekat mora sadržati: model_variable, source_image_id, quantity, value, unit, interval.
+
+calibrated_inputs:
+- tačno 6 objekata, za T, P, F, V, D i U_ctrl;
+- svaki objekat mora sadržati: model_variable, raw_value, correction_applied, corrected_value, interval.
+
+fuzzy_memberships:
+- mora sadržati skupove za T, P, F, V i D;
+- U_ctrl ne učestvuje u fuzzy pravilima, ali učestvuje u dinamici.
+
+nominal_simulation:
+- mora sadržati A0_MONITOR, A1_DERATE, A2_CONTROLLED_RELIEF, A3_EMERGENCY_MODE i A4_PHASED_RELIEF;
+- svaka akcija mora sadržati tri stanja, outcome, max_relative_excess i intervention_cost.
+
+pessimistic_simulation:
+- mora sadržati scenario_definition;
+- mora sadržati A0_MONITOR, A1_DERATE, A2_CONTROLLED_RELIEF, A3_EMERGENCY_MODE i A4_PHASED_RELIEF;
+- za svaku akciju mora biti navedeno koji U_ctrl podslučaj je lošiji i zašto.
+
+action_summary:
+- mora sadržati A0_MONITOR, A1_DERATE, A2_CONTROLLED_RELIEF, A3_EMERGENCY_MODE i A4_PHASED_RELIEF;
+- za svaku akciju mora sadržati nominal_outcome, pessimistic_outcome, nominal_max_relative_excess, pessimistic_max_relative_excess, worst_case_max_relative_excess, intervention_cost i eligible.
+
+recommended_action mora biti jedna od vrednosti:
+MONITOR
+DERATE
+CONTROLLED_RELIEF
+EMERGENCY_MODE
+PHASED_RELIEF
+
+recommended_action_index mora biti:
+0 za MONITOR
+1 za DERATE
+2 za CONTROLLED_RELIEF
+3 za EMERGENCY_MODE
+4 za PHASED_RELIEF
+
+Kontrolne tačke za RESULTS_JSON:
+CP-J1: JSON je validan;
+CP-J2: instrument_readings ima tačno 9 elemenata;
+CP-J3: ignored_instruments ima tačno 3 elementa;
+CP-J4: model_input_bindings ima tačno 6 elemenata;
+CP-J5: T, P, F, V, D i U_ctrl se pojavljuju tačno jednom;
+CP-J6: nominal_simulation sadrži A0–A4;
+CP-J7: pessimistic_simulation sadrži A0–A4;
+CP-J8: action_summary sadrži A0–A4;
+CP-J9: recommended_action je u skladu sa decision protocol-om;
+CP-J10: JSON nema placeholder vrednosti.
+
+Na samom kraju odgovora napiši:
+
+<END>
